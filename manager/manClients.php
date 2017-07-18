@@ -22,6 +22,23 @@ ORIGINALLY CREATED ON: 07/04/2017
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
+      <?php
+          $Err = "";
+          if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            // logout button clicked
+            if (isset($_POST['logout'])) {
+                session_start();
+                unset($_SESSION['fName']);
+            	unset($_SESSION['lName']);
+            	unset($_SESSION['email']);
+            	unset($_SESSION['confirmEmail']);
+            	unset($_SESSION['password']);
+            	unset($_SESSION['confirmPasssword']);
+                header("Location: ../index.php");
+            }
+          }
+       ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -47,15 +64,23 @@ ORIGINALLY CREATED ON: 07/04/2017
               <a class="nav-link" href="manSettings.php">Settings</a>
             </li>
           </ul>
-          <form class="form-inline">
+          <form class="form-inline" method="post">
             <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
-            <a class="btn btn-primary my-2 my-sm-0 logout">Logout</a>
+            <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
           </form>
         </div>
       </nav>
       <div class="container">
         <h1 class="pages-heading">Clients</h1>
         <div id="accordion" role="tablist" aria-multiselectable="true">
+      <div class="row">
+          <div class="col-12 col-sm-3">
+              <form action="newClient.php">
+                  <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">+ Add Client</button>
+                  <br />
+              </form>
+          </div>
+      </div>
       <div class="card">
         <div class="card-header" role="tab" id="headingOne">
             <h5 class="mb-0">
@@ -66,39 +91,32 @@ ORIGINALLY CREATED ON: 07/04/2017
                             Jake Mor
                         </a>
                       </div>
-                      <div class="text-right">
-                         <a class="btn btn-danger text-right">Delete</a>
-                      </div>
                   </div>
               </div>
             </h5>
         </div>
         <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
           <div class="card-block">
-              <form>
+              <form action="editClient.php">
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <label for="name">Name</label>
-                        <span class="error"><?php echo $nameErr; ?></span>
-                        <input name="name" class="form-control" type="text" value="Jake Mor">
+                        <input name="name" class="form-control" type="text" value="Jake Mor" disabled>
                     </div>
                     <div class="col-12 col-md-6">
                         <label for="address">Address</label>
-                        <span class="error"><?php echo $addressErr; ?></span>
-                        <input name="address" class="form-control" type="text" value="1234 Kol Dr">
+                        <input name="address" class="form-control" type="text" value="1234 Kol Dr" disabled>
                     </div>
                     <div class="col-12 col-md-6">
                         <label for="phone">Phone Number</label>
-                        <span class="error"><?php echo $PhoneErr; ?></span>
-                        <input name="phone" class="form-control" type="text" value="317-489-7896">
+                        <input name="phone" class="form-control" type="text" value="317-489-7896" disabled>
                     </div>
                     <div class="col-12 col-md-6">
                         <label for="email">Email Address</label>
-                        <span class="error"><?php echo $emailErr; ?></span>
-                        <input name="email" class="form-control" type="text" value="jake.mor@info.com">
+                        <input name="email" class="form-control" type="text" value="jake.mor@info.com" disabled>
                     </div>
                 </div>
-                <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Save Changes</button>
+                <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Edit Client</button>
                 <br />
               </form>
           </div>
@@ -114,39 +132,32 @@ ORIGINALLY CREATED ON: 07/04/2017
                         John Smith
                     </a>
                   </div>
-                  <div class="text-right">
-                     <a class="btn btn-danger text-right">Delete</a>
-                  </div>
               </div>
           </div>
         </h5>
     </div>
     <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
       <div class="card-block">
-          <form>
+          <form action="editClient.php">
             <div class="row">
                 <div class="col-12 col-md-6">
                     <label for="name">Name</label>
-                    <span class="error"><?php echo $nameErr; ?></span>
-                    <input name="name" class="form-control" type="text" value="John Smith">
+                    <input name="name" class="form-control" type="text" value="John Smith" disabled>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="address">Address</label>
-                    <span class="error"><?php echo $addressErr; ?></span>
-                    <input name="address" class="form-control" type="text" value="1234 Kol Dr">
+                    <input name="address" class="form-control" type="text" value="1234 Kol Dr" disabled>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="phone">Phone Number</label>
-                    <span class="error"><?php echo $PhoneErr; ?></span>
-                    <input name="phone" class="form-control" type="text" value="847-978-1236">
+                    <input name="phone" class="form-control" type="text" value="847-978-1236" disabled>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="email">Email Address</label>
-                    <span class="error"><?php echo $emailErr; ?></span>
-                    <input name="email" class="form-control" type="text" value="john.smith@info.com">
+                    <input name="email" class="form-control" type="text" value="john.smith@info.com" disabled>
                 </div>
             </div>
-            <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Save Changes</button>
+            <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Edit Client</button>
             <br />
           </form>
       </div>
@@ -162,39 +173,35 @@ ORIGINALLY CREATED ON: 07/04/2017
                         Lionel Messi
                     </a>
                   </div>
-                  <div class="text-right">
-                     <a class="btn btn-danger text-right">Delete</a>
-                  </div>
               </div>
           </div>
         </h5>
     </div>
     <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
       <div class="card-block">
-          <form>
+          <form action="editClient.php">
             <div class="row">
                 <div class="col-12 col-md-6">
                     <label for="name">Name</label>
-                    <span class="error"><?php echo $nameErr; ?></span>
-                    <input name="name" class="form-control" type="text" value="Lionel Messi">
+                    <input name="name" class="form-control" type="text" value="Lionel Messi" disabled>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="address">Address</label>
                     <span class="error"><?php echo $addressErr; ?></span>
-                    <input name="address" class="form-control" type="text" value="6987 Ollio Dr">
+                    <input name="address" class="form-control" type="text" value="6987 Ollio Dr" disabled>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="phone">Phone Number</label>
                     <span class="error"><?php echo $PhoneErr; ?></span>
-                    <input name="phone" class="form-control" type="text" value="978-934-9852">
+                    <input name="phone" class="form-control" type="text" value="978-934-9852" disabled>
                 </div>
                 <div class="col-12 col-md-6">
                     <label for="email">Email Address</label>
                     <span class="error"><?php echo $addressErr; ?></span>
-                    <input name="email" class="form-control" type="text" value="lionel.messi@info.com">
+                    <input name="email" class="form-control" type="text" value="lionel.messi@info.com" disabled>
                 </div>
             </div>
-            <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Save Changes</button>
+            <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Edit Client</button>
             <br />
           </form>
       </div>

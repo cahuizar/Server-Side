@@ -8,6 +8,86 @@ ORIGINALLY CREATED ON: 07/04/2017
 
 <?php
     $fNameErr = $lNameErr = $emailErr = $emailConfirmErr = $passwordErr = $passwordConfirmErr = "";
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+        // get all the inputs from lab1.php
+        $fName = filter_input(INPUT_POST, 'fName');
+        $lName = filter_input(INPUT_POST, 'lName');
+        $email = filter_input(INPUT_POST, 'email');
+        $confirmEmail = filter_input(INPUT_POST, 'confirmEmail');
+        $password = filter_input(INPUT_POST, 'password');
+        $confirmPassword = filter_input(INPUT_POST, 'confirmPassword');
+
+        // use boolean to stop page from loading the next page
+        $errorFound = false;
+
+        // error if the first name is empty
+        if (empty($_POST["fName"])) {
+            $fNameErr = "First Name is required";
+            $errorFound = true;
+        } else {
+            $fNameErr = "";
+        }
+
+        // error if the last name is empty
+        if (empty($_POST["lName"])) {
+            $lNameErr = "Last name is required";
+            $errorFound = true;
+        } else {
+            $lNameErr = "";
+        }
+
+        // error if the email is empty
+        if (empty($_POST["email"])) {
+            $emailErr = "Email is required";
+            $errorFound = true;
+        } else {
+            $emailErr = "";
+        }
+
+        // error if the emails do not match
+        if($email != $confirmEmail) {
+            $emailConfirmErr = "Emails do not match";
+            $errorFound = true;
+        } else {
+            $emailConfirmErr = "";
+        }
+
+        // error if the password length is less than 8
+        if (strlen($password) < 8) {
+            $passwordErr = "Password must be atleast 8 characters";
+            $errorFound = true;
+        } else {
+            $passwordErr = "";
+        }
+
+        // error if the passwords do not match
+        if($password != $confirmPassword) {
+            $passwordConfirmErr = "Passwords do not match";
+            $errorFound = true;
+        } else {
+            $passwordConfirmErr = "";
+        }
+
+        // do the following if no errors are found on the form
+        if ($errorFound == false){
+            session_start();
+
+            // store input text in session so that it can be used on display.php
+            $_SESSION['fName'] = $fName;
+            $_SESSION['lName'] = $lName;
+            $_SESSION['email'] = $email;
+            $_SESSION['confirmEmail'] = $confirmEmail;
+            $_SESSION['password'] = $password;
+            $_SESSION['confirmPassword'] = $confirmPassword;
+
+            // go to display.php
+            header("Location: registerTest.php");
+            exit();
+        }
+
+    }
+
 ?>
 
 <html lang="en">
@@ -25,7 +105,7 @@ ORIGINALLY CREATED ON: 07/04/2017
     <div class="row h-100 justify-content-center align-items-center">
       <div class="col">
         <p class="heading">Manager Register</p>
-        <form class="form-signin" action="manLogin.php">
+        <form class="form-signin" method="post">
           <h2 class="form-signin-heading">Please enter your information:</h2>
           <label for="fName" class="sr-only">First Name</label>
           <span class="error"><?php echo $fNameErr; ?></span>

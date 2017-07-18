@@ -2,12 +2,12 @@
 <!--
 TITLE: Course Project 2
 AUTHOR: Carlos Huizar
-File Name: empSettings.php
+File Name: newEmployee.php
 ORIGINALLY CREATED ON: 07/04/2017
 -->
 <html lang="en">
   <head>
-    <title>Employee | Settings</title>
+    <title>Manager | New Client</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -78,15 +78,13 @@ ORIGINALLY CREATED ON: 07/04/2017
                     session_start();
 
                     // store input text in session so that it can be used on display.php
-                    $_SESSION['fName'] = $fName;
-                    $_SESSION['lName'] = $lName;
-                    $_SESSION['email'] = $email;
-                    $_SESSION['confirmEmail'] = $confirmEmail;
-                    $_SESSION['password'] = $password;
-                    $_SESSION['confirmPassword'] = $confirmPassword;
+                    $_SESSION['empFName'] = $fName;
+                    $_SESSION['empLName'] = $lName;
+                    $_SESSION['empEmail'] = $email;
+                    $_SESSION['empPassword'] = $password;
 
                     // go to display.php
-                    header("Location: settingsTest.php");
+                    header("Location: newEmployeeTest.php");
                     exit();
                 }
             }
@@ -101,20 +99,20 @@ ORIGINALLY CREATED ON: 07/04/2017
     <div class="collapse navbar-collapse" id="navbarColor03">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="empDashboard.php">Home</a>
+          <a class="nav-link" href="manDashboard.php">Home</a>
         </li>
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Work
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="empSchedule.php">Schedule</a>
-              <a class="dropdown-item" href="empClients.php">Clients</a>
-              <a class="dropdown-item" href="empWork.php">Timesheet</a>
+              <a class="dropdown-item" href="manSchedule.php">Employees</a>
+              <a class="dropdown-item" href="manClients.php">Clients</a>
+              <a class="dropdown-item" href="manWork.php">Timesheet</a>
             </div>
         </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Settings <span class="sr-only">(current)</span></a>
+        <li class="nav-item">
+          <a class="nav-link" href="manSettings.php">Settings <span class="sr-only">(current)</span></a>
         </li>
       </ul>
       <form class="form-inline" method="post">
@@ -124,47 +122,47 @@ ORIGINALLY CREATED ON: 07/04/2017
     </div>
   </nav>
   <div class="container">
-    <h1 class="pages-heading">Edit Profile</h1>
+    <h1 class="pages-heading">New Employee</h1>
   	<hr>
 	<div class="row">
       <!-- edit form column -->
       <div class="col-md-9 personal-info">
-        <form class="form-horizontal" method="post">
-          <div class="form-group">
-            <label class="col-lg-3 control-label">First name:</label>
-            <div class="col-lg-8">
-                <span class="error"><?php echo $fNameErr; ?></span>
-              <input class="form-control" value="John" type="text" name="fName">
+          <form class="form-horizontal" method="post">
+            <div class="form-group">
+              <label class="col-lg-3 control-label">First name:</label>
+              <div class="col-lg-8">
+                  <span class="error"><?php echo $fNameErr; ?></span>
+                <input class="form-control" type="text" name="fName">
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label">Last name:</label>
-            <div class="col-lg-8">
-              <span class="error"><?php echo $lNameErr; ?></span>
-              <input class="form-control" value="Smith" type="text" name="lName">
+            <div class="form-group">
+              <label class="col-lg-3 control-label">Last name:</label>
+              <div class="col-lg-8">
+                <span class="error"><?php echo $lNameErr; ?></span>
+                <input class="form-control" type="text" name="lName">
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-lg-3 control-label">Email:</label>
-            <div class="col-lg-8">
-              <span class="error"><?php echo $emailErr; ?></span>
-              <input class="form-control" value="janesemail@gmail.com" type="text" name="email">
+            <div class="form-group">
+              <label class="col-lg-3 control-label">Email:</label>
+              <div class="col-lg-8">
+                <span class="error"><?php echo $emailErr; ?></span>
+                <input class="form-control" type="text" name="email">
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label">Password:</label>
-            <div class="col-md-8">
-              <span class="error"><?php echo $passwordErr; ?></span>
-              <input class="form-control" value="john1234" type="password" name="password">
+            <div class="form-group">
+              <label class="col-md-3 control-label">Password:</label>
+              <div class="col-md-8">
+                <span class="error"><?php echo $passwordErr; ?></span>
+                <input class="form-control" type="password" name="password">
+              </div>
             </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label"></label>
-            <div class="col-md-8">
-              <input class="btn btn-primary" value="Save Changes" type="submit">
+            <div class="form-group">
+              <label class="col-md-3 control-label"></label>
+              <div class="col-md-8">
+                <input class="btn btn-primary" value="Save Changes" type="submit">
+              </div>
             </div>
-          </div>
-        </form>
+          </form>
       </div>
   </div>
 </div>

@@ -17,6 +17,81 @@ ORIGINALLY CREATED ON: 07/04/2017
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
+      <?php
+          $fNameErr = $lNameErr = $emailErr = $passwordErr = "";
+          if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            // logout button clicked
+            if (isset($_POST['logout'])) {
+                session_start();
+                unset($_SESSION['fName']);
+            	unset($_SESSION['lName']);
+            	unset($_SESSION['email']);
+            	unset($_SESSION['confirmEmail']);
+            	unset($_SESSION['password']);
+            	unset($_SESSION['confirmPasssword']);
+                header("Location: ../index.php");
+            } else {
+                // get all the inputs from lab1.php
+                $fName = filter_input(INPUT_POST, 'fName');
+                $lName = filter_input(INPUT_POST, 'lName');
+                $email = filter_input(INPUT_POST, 'email');
+                $password = filter_input(INPUT_POST, 'password');
+
+                // use boolean to stop page from loading the next page
+                $errorFound = false;
+
+                // error if the first name is empty
+                if (empty($_POST["fName"])) {
+                    $fNameErr = "First Name is required";
+                    $errorFound = true;
+                } else {
+                    $fNameErr = "";
+                }
+
+                // error if the last name is empty
+                if (empty($_POST["lName"])) {
+                    $lNameErr = "Last name is required";
+                    $errorFound = true;
+                } else {
+                    $lNameErr = "";
+                }
+
+                // error if the email is empty
+                if (empty($_POST["email"])) {
+                    $emailErr = "Email is required";
+                    $errorFound = true;
+                } else {
+                    $emailErr = "";
+                }
+
+                // error if the password length is less than 8
+                if (strlen($password) < 8) {
+                    $passwordErr = "Password must be atleast 8 characters";
+                    $errorFound = true;
+                } else {
+                    $passwordErr = "";
+                }
+
+                // do the following if no errors are found on the form
+                if ($errorFound == false){
+                    session_start();
+
+                    // store input text in session so that it can be used on display.php
+                    $_SESSION['fName'] = $fName;
+                    $_SESSION['lName'] = $lName;
+                    $_SESSION['email'] = $email;
+                    $_SESSION['confirmEmail'] = $confirmEmail;
+                    $_SESSION['password'] = $password;
+                    $_SESSION['confirmPassword'] = $confirmPassword;
+
+                    // go to display.php
+                    header("Location: settingsTest.php");
+                    exit();
+                }
+            }
+          }
+       ?>
   <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -42,9 +117,9 @@ ORIGINALLY CREATED ON: 07/04/2017
           <a class="nav-link" href="#">Settings <span class="sr-only">(current)</span></a>
         </li>
       </ul>
-      <form class="form-inline">
+      <form class="form-inline" method="post">
         <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
-        <a class="btn btn-primary my-2 my-sm-0 logout">Logout</a>
+        <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
       </form>
     </div>
   </nav>
@@ -54,29 +129,33 @@ ORIGINALLY CREATED ON: 07/04/2017
 	<div class="row">
       <!-- edit form column -->
       <div class="col-md-9 personal-info">
-        <form class="form-horizontal"WS>
+        <form class="form-horizontal" method="post">
           <div class="form-group">
             <label class="col-lg-3 control-label">First name:</label>
             <div class="col-lg-8">
-              <input class="form-control" value="John" type="text">
+                <span class="error"><?php echo $fNameErr; ?></span>
+              <input class="form-control" value="John" type="text" name="fName">
             </div>
           </div>
           <div class="form-group">
             <label class="col-lg-3 control-label">Last name:</label>
             <div class="col-lg-8">
-              <input class="form-control" value="Smith" type="text">
+              <span class="error"><?php echo $lNameErr; ?></span>
+              <input class="form-control" value="Smith" type="text" name="lName">
             </div>
           </div>
           <div class="form-group">
             <label class="col-lg-3 control-label">Email:</label>
             <div class="col-lg-8">
-              <input class="form-control" value="janesemail@gmail.com" type="text">
+              <span class="error"><?php echo $emailErr; ?></span>
+              <input class="form-control" value="janesemail@gmail.com" type="text" name="email">
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label">Password:</label>
             <div class="col-md-8">
-              <input class="form-control" value="john1234" type="password">
+              <span class="error"><?php echo $passwordErr; ?></span>
+              <input class="form-control" value="john1234" type="password" name="password">
             </div>
           </div>
           <div class="form-group">

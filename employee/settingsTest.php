@@ -2,12 +2,36 @@
 <!--
 TITLE: Course Project 2
 AUTHOR: Carlos Huizar
-File Name: empSchedule.php
+File Name: settingsTest.php
 ORIGINALLY CREATED ON: 07/04/2017
 -->
+
+<?php
+	session_start();
+    // get all the inputs from the session
+    $fName = $_SESSION['fName'];
+    $lName = $_SESSION['lName'];
+    $email = $_SESSION['email'];
+    $password = $_SESSION['password'];
+
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+      // logout button clicked
+      if (isset($_POST['logout'])) {
+          session_start();
+          unset($_SESSION['fName']);
+          unset($_SESSION['lName']);
+          unset($_SESSION['email']);
+          unset($_SESSION['confirmEmail']);
+          unset($_SESSION['password']);
+          unset($_SESSION['confirmPasssword']);
+          header("Location: ../index.php");
+      }
+ ?>
+
 <html lang="en">
   <head>
-    <title>Employee | Work</title>
+    <title>Employee Settings</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -17,25 +41,6 @@ ORIGINALLY CREATED ON: 07/04/2017
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
-      <?php
-          $Err = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
-
-            }
-          }
-       ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -47,7 +52,7 @@ ORIGINALLY CREATED ON: 07/04/2017
             <li class="nav-item">
               <a class="nav-link" href="empDashboard.php">Home</a>
             </li>
-            <li class="nav-item dropdown active">
+            <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Work
                 </a>
@@ -57,8 +62,8 @@ ORIGINALLY CREATED ON: 07/04/2017
                   <a class="dropdown-item" href="empWork.php">Timesheet</a>
                 </div>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="empSettings.php">Settings</a>
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Settings <span class="sr-only">(current)</span></a>
             </li>
           </ul>
           <form class="form-inline" method="post">
@@ -68,36 +73,20 @@ ORIGINALLY CREATED ON: 07/04/2017
         </div>
       </nav>
       <div class="container">
-        <h1 class="pages-heading">Schedule </h1>
-        <table class="table table-hover work-schedule">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Clients</th>
-              <th>Start Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">07/2/17</th>
-              <td>Mark Johnson Stacy Clark</td>
-              <td>7:30 am</td>
-            </tr>
-            <tr>
-              <th scope="row">07/3/17</th>
-              <td>Jacob Smith Susan Ridgeway</td>
-              <td>8:00 am</td>
-            </tr>
-            <tr>
-               <th scope="row">07/4/17</th>
-               <td>Carlos Lopez</td>
-               <td>11:00 am</td>
-            </tr>
-          </tbody>
-      </table>
+        <div class="row h-100 justify-content-center align-items-center">
+          <div class="col">
+            <p class="heading">Employee Information</p>
+              <h2 class="form-signin-heading">Information Entered:</h2>
+              <label>First Name: </label><span><?php echo htmlspecialchars($fName); ?></span><br /><br />
+              <label>Last Name: </label><span><?php echo htmlspecialchars($lName); ?></span><br /><br />
+              <label>Email: </label><span><?php echo htmlspecialchars($email); ?></span><br /><br />
+      		  <label>Password: </label><span><?php echo htmlspecialchars($password); ?></span><br /><br />
+              <br />
+
+        </div>
       </div>
-      <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   </body>
 </html>
