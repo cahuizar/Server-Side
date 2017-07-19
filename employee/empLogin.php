@@ -26,6 +26,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                   session_start();
                   // store input text in session so that it can be used on display.php
                   $_SESSION['email'] = $email;
+                  $_SESSION['isLoggedIn'] = "yes";
                   header("Location: empDashboard.php");
               } else {
                   $Err = "Email or password combination is incorrect.";
