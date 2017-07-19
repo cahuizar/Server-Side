@@ -2,12 +2,42 @@
 <!--
 TITLE: Course Project 2
 AUTHOR: Carlos Huizar
-File Name: empLogin.php
+File Name: registerTest.php
 ORIGINALLY CREATED ON: 07/04/2017
 -->
+
+<?php
+
+	session_start();
+
+    // get all the inputs from the session
+    $fName = $_SESSION['fName'];
+    $lName = $_SESSION['lName'];
+    $email = $_SESSION['email'];
+    $confirmEmail = $_SESSION['confirmEmail'];
+    $password = $_SESSION['password'];
+    $confirmPassword = $_SESSION['confirmPassword'];
+	if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+      // logout button clicked
+      if (isset($_POST['logout'])) {
+          session_start();
+          unset($_SESSION['fName']);
+          unset($_SESSION['lName']);
+          unset($_SESSION['email']);
+          unset($_SESSION['confirmEmail']);
+          unset($_SESSION['password']);
+          unset($_SESSION['confirmPasssword']);
+          header("Location: ../index.php");
+      }
+    }
+
+
+ ?>
+
 <html lang="en">
   <head>
-    <title>Employee Login</title>
+    <title>Manager Register</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -17,44 +47,27 @@ ORIGINALLY CREATED ON: 07/04/2017
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
-      <?php
-          $Err = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-              $email = filter_input(INPUT_POST, 'email');
-              $password = filter_input(INPUT_POST, 'password');
-              if($email == "cahuizar@test.com" && $password == "Test123") {
-                  session_start();
-                  // store input text in session so that it can be used on display.php
-                  $_SESSION['email'] = $email;
-                  header("Location: empDashboard.php");
-              } else {
-                  $Err = "Email or password combination is incorrect.";
-              }
-          }
-
-      ?>
       <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
           <div class="col">
-            <p class="heading">Employee Login</p>
-            <form class="form-signin" method="post">
-              <h2 class="form-signin-heading">Please sign in</h2>
-              <label for="inputEmail" class="sr-only">Email address</label>
-              <input style="margin-top:5px;" name="email" id="inputEmail" class="form-control" placeholder="Email address" autofocus="" type="email">
-              <label for="inputPassword" class="sr-only">Password</label>
-              <input style="margin-top:5px;" name="password" id="inputPassword" class="form-control" placeholder="Password" type="password">
-              <span class="error"><?php echo $Err; ?></span>
-              <button style="margin-top:15px;"class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            <p class="heading">Manager Register</p>
+              <h2 class="form-signin-heading">Information Entered:</h2>
+              <label>First Name: </label><span><?php echo htmlspecialchars($fName); ?></span><br /><br />
+              <label>Last Name: </label><span><?php echo htmlspecialchars($lName); ?></span><br /><br />
+              <label>Email: </label><span><?php echo htmlspecialchars($email); ?></span><br /><br />
+              <label>Confirm Email: </label><span><?php echo htmlspecialchars($confirmEmail); ?></span><br /><br />
+      		  <label>Password: </label><span><?php echo htmlspecialchars($password); ?></span><br /><br />
+              <label>Confirm Password: </label><span><?php echo htmlspecialchars($confirmPassword); ?></span><br /><br />
               <br />
               <div class="row">
                   <div class="col-6">
-                      <a href="../index.php" class="btn btn-lg btn-secondary btn-block">Back</a>
+                      <a href="manLogin.php" class="btn btn-lg btn-secondary btn-block">Login</a>
                   </div>
                   <div class="col-6">
-                      <a href="empRegister.php" class="btn btn-lg btn-secondary btn-block">Register</a>
+                      <a href="../index.php" class="btn btn-lg btn-secondary btn-block">Home</a>
                   </div>
               </div>
-            </form>
+              <br /><br />
             <div class="text-center">
               <a class="font-icons" href="mailto:hire@carloshuizar.com?subject=Hola" target="_blank">
                 <span class="fa-stack fa-lg">

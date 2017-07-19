@@ -18,6 +18,69 @@ ORIGINALLY CREATED ON: 07/04/2017
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
+      <?php
+          $dateErr = $startTimeErr = $endTimeErr = "";
+          if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            // logout button clicked
+            if (isset($_POST['logout'])) {
+                session_start();
+                unset($_SESSION['fName']);
+            	unset($_SESSION['lName']);
+            	unset($_SESSION['email']);
+            	unset($_SESSION['confirmEmail']);
+            	unset($_SESSION['password']);
+            	unset($_SESSION['confirmPasssword']);
+                header("Location: ../index.php");
+            } else {
+                // get all the inputs from lab1.php
+                $date = filter_input(INPUT_POST, 'date');
+                $startTime = filter_input(INPUT_POST, 'startTime');
+                $endTime = filter_input(INPUT_POST, 'endTime');
+
+                // use boolean to stop page from loading the next page
+                $errorFound = false;
+
+                // error if the first name is empty
+                if (empty($_POST["date"])) {
+                    $dateErr = "Date is required";
+                    $errorFound = true;
+                } else {
+                    $dateErr = "";
+                }
+
+                // error if the last name is empty
+                if (empty($_POST["startTime"])) {
+                    $startTimeErr = "Start time is required";
+                    $errorFound = true;
+                } else {
+                    $startTimeErr = "";
+                }
+
+                // error if the last name is empty
+                if (empty($_POST["endTime"])) {
+                    $endTimeErr = "End time is required";
+                    $errorFound = true;
+                } else {
+                    $endTimeErr = "";
+                }
+
+                // do the following if no errors are found on the form
+                if ($errorFound == false){
+                    session_start();
+
+                    // store input text in session so that it can be used on display.php
+                    $_SESSION['date'] = $date;
+                    $_SESSION['startTime'] = $startTime;
+                    $_SESSION['endTime'] = $endTime;
+
+                    // go to display.php
+                    header("Location: workTest.php");
+                    exit();
+                }
+            }
+          }
+       ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -43,26 +106,28 @@ ORIGINALLY CREATED ON: 07/04/2017
               <a class="nav-link" href="empSettings.php">Settings</a>
             </li>
           </ul>
-          <form class="form-inline">
+          <form class="form-inline" method="post">
             <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
-            <a class="btn btn-primary my-2 my-sm-0 logout">Logout</a>
+            <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
           </form>
         </div>
       </nav>
       <div class="container">
         <h1 class="pages-heading">Timesheet</h1>
-        <form class="form-signin">
+        <form class="form-signin" method="post">
           <h2 class="form-signin-heading">New Log:</h2>
           <label for="date" class="sr-only">Date</label>
+          <span class="error"><?php echo $dateErr; ?></span>
           <input style="margin-top:5px;" name="date" class="form-control" placeholder="Date" type="text" id="datepicker">
           <label for="startTime" class="sr-only">Start Time</label>
+          <span class="error"><?php echo $startTimeErr; ?></span>
           <input style="margin-top:5px;" name="startTime" class="form-control" placeholder="Start time" type="text" id="startTime" value="">
           <label for="endTime" class="sr-only">End Time</label>
+          <span class="error"><?php echo $endTimeErr; ?></span>
           <input style="margin-top:5px;" name="endTime" class="form-control" placeholder="End time" type="text" id="endTime" value="">
           <button style="margin-top:15px;"class="btn btn-lg btn-primary btn-block" type="submit">Submit Timesheet</button>
           <br />
         </form>
-
       </div>
       <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>

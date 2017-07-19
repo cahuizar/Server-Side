@@ -17,6 +17,31 @@ ORIGINALLY CREATED ON: 07/04/2017
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   </head>
   <body>
+      <?php
+          $Err = "";
+          if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            // logout button clicked
+            if (isset($_POST['logout'])) {
+                session_start();
+                unset($_SESSION['fName']);
+            	unset($_SESSION['lName']);
+            	unset($_SESSION['email']);
+            	unset($_SESSION['confirmEmail']);
+            	unset($_SESSION['password']);
+            	unset($_SESSION['confirmPasssword']);
+                header("Location: ../index.php");
+            }
+            else if (isset($_POST['edit'])) {
+
+                header("Location: editEmployee.php");
+            }
+            else if (isset($_POST['work'])) {
+
+                header("Location: newWorkDay.php");
+            }
+          }
+       ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -42,14 +67,22 @@ ORIGINALLY CREATED ON: 07/04/2017
               <a class="nav-link" href="manSettings.php">Settings</a>
             </li>
           </ul>
-          <form class="form-inline">
+          <form class="form-inline" method="post">
             <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
-            <a class="btn btn-primary my-2 my-sm-0 logout">Logout</a>
+            <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
           </form>
         </div>
       </nav>
       <div class="container">
         <h1 class="pages-heading">Employees</h1>
+        <div class="row">
+            <div class="col-12 col-sm-3">
+                <form action="newEmployee.php">
+                    <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">+ Add Employee</button>
+                    <br />
+                </form>
+            </div>
+        </div>
         <div id="accordion" role="tablist" aria-multiselectable="true">
           <div class="card">
             <div class="card-header" role="tab" id="headingOne">
@@ -61,9 +94,6 @@ ORIGINALLY CREATED ON: 07/04/2017
                               Landon Donovan
                           </a>
                         </div>
-                        <div class="text-right">
-                           <a class="btn btn-danger text-right">Delete</a>
-                        </div>
                     </div>
                 </div>
               </h5>
@@ -74,34 +104,34 @@ ORIGINALLY CREATED ON: 07/04/2017
                   <div class="card">
                     <div class="card-header">
                       <h5 class="mb-0"><a data-toggle="collapse" data-parent="#accordion2" href="#collapseInnerOne">
-                        New Work Date
+                        Edit Employee & New Work Date
                     </a></h5>
                     </div>
                     <div id="collapseInnerOne" class="collapse">
                       <div class="card-block">
-                          <form>
+                          <form method="post">
                             <div class="row">
-                                <div class="col-12 col-md-3">
-                                    <label for="date">Date</label>
-                                    <input name="date" class="form-control" placeholder="Date" type="text" id="datepicker">
+                                  <div class="col-12 col-md-6 form-group">
+                                      <label for="fName">First Name</label>
+                                      <input name="fName" class="form-control" type="text" value="Jake" disabled>
+                                  </div>
+                                  <div class="col-12 col-md-6">
+                                      <label for="lName">Last Name</label>
+                                      <input name="lName" class="form-control" type="text" value="Mor" disabled>
+                                  </div>
+                                  <div class="col-12 col-md-6">
+                                      <label for="email">Email Address</label>
+                                      <input name="email" class="form-control" type="text" value="jake.mor@info.com" disabled>
+                                  </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <button class="btn btn-lg btn-primary btn-block schedule-submit" name="edit">Edit Employee</button>
                                 </div>
-                                <div class="col-12 col-md-5">
-                                    <label for="exampleSelect2">Clients (select multiple):</label>
-                                    <select multiple class="form-control" id="exampleSelect2">
-                                      <option>Mark Johnson</option>
-                                      <option>Stacy Clark</option>
-                                      <option>Jacob Smith</option>
-                                      <option>Susan Ridgeway</option>
-                                      <option>Carlos Lopez</option>
-                                    </select>
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <label for="startTime" class="exampleSelect2">Start Time</label>
-                                    <input name="startTime" class="form-control" placeholder="Start time" type="text" id="startTime" value="">
-                                    <label for="endTime" class="sr-only">End Time</label>
+                                <div class="col-6">
+                                    <button class="btn btn-lg btn-primary btn-block schedule-submit" name="work">New Work Date</button>
                                 </div>
                             </div>
-                            <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Submit</button>
                             <br />
                           </form>
                       </div>
@@ -158,9 +188,6 @@ ORIGINALLY CREATED ON: 07/04/2017
                               Stacy Turk
                           </a>
                         </div>
-                        <div class="text-right">
-                           <a class="btn btn-danger text-right">Delete</a>
-                        </div>
                     </div>
                 </div>
               </h5>
@@ -171,34 +198,34 @@ ORIGINALLY CREATED ON: 07/04/2017
                   <div class="card">
                     <div class="card-header">
                       <h5 class="mb-0"><a data-toggle="collapse" data-parent="#accordion5" href="#collapseInner5">
-                        New Work Date
+                        Edit Employee & New Work Date
                     </a></h5>
                     </div>
                     <div id="collapseInner5" class="collapse">
                       <div class="card-block">
-                          <form>
+                          <form method="post">
                             <div class="row">
-                                <div class="col-12 col-md-3">
-                                    <label for="date">Date</label>
-                                    <input name="date" class="form-control" placeholder="Date" type="text" id="datepicker">
+                                  <div class="col-12 col-md-6 form-group">
+                                      <label for="fName">First Name</label>
+                                      <input name="fName" class="form-control" type="text" value="Stacy" disabled>
+                                  </div>
+                                  <div class="col-12 col-md-6">
+                                      <label for="lName">Last Name</label>
+                                      <input name="lName" class="form-control" type="text" value="Turk" disabled>
+                                  </div>
+                                  <div class="col-12 col-md-6">
+                                      <label for="email">Email Address</label>
+                                      <input name="email" class="form-control" type="text" value="stacy.turk@info.com" disabled>
+                                  </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <button class="btn btn-lg btn-primary btn-block schedule-submit" name="edit">Edit Employee</button>
                                 </div>
-                                <div class="col-12 col-md-5">
-                                    <label for="exampleSelect2">Clients (select multiple):</label>
-                                    <select multiple class="form-control" id="exampleSelect2">
-                                      <option>Mark Johnson</option>
-                                      <option>Stacy Clark</option>
-                                      <option>Jacob Smith</option>
-                                      <option>Susan Ridgeway</option>
-                                      <option>Carlos Lopez</option>
-                                    </select>
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <label for="startTime" class="exampleSelect2">Start Time</label>
-                                    <input name="startTime" class="form-control" placeholder="Start time" type="text" id="startTime" value="">
-                                    <label for="endTime" class="sr-only">End Time</label>
+                                <div class="col-6">
+                                    <button class="btn btn-lg btn-primary btn-block schedule-submit" name="work">New Work Date</button>
                                 </div>
                             </div>
-                            <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Submit</button>
                             <br />
                           </form>
                       </div>
@@ -255,9 +282,6 @@ ORIGINALLY CREATED ON: 07/04/2017
                               Michael Scott
                           </a>
                         </div>
-                        <div class="text-right">
-                           <a class="btn btn-danger text-right">Delete</a>
-                        </div>
                     </div>
                 </div>
               </h5>
@@ -268,34 +292,34 @@ ORIGINALLY CREATED ON: 07/04/2017
                   <div class="card">
                     <div class="card-header">
                       <h5 class="mb-0"><a data-toggle="collapse" data-parent="#accordion8" href="#collapseInner8">
-                        New Work Date
+                        Edit Employee & New Work Date
                     </a></h5>
                     </div>
                     <div id="collapseInner8" class="collapse">
                       <div class="card-block">
-                          <form>
+                          <form method="post">
                             <div class="row">
-                                <div class="col-12 col-md-3">
-                                    <label for="date">Date</label>
-                                    <input name="date" class="form-control" placeholder="Date" type="text" id="datepicker">
+                                  <div class="col-12 col-md-6 form-group">
+                                      <label for="fName">First Name</label>
+                                      <input name="fName" class="form-control" type="text" value="Michael" disabled>
+                                  </div>
+                                  <div class="col-12 col-md-6">
+                                      <label for="lName">Last Name</label>
+                                      <input name="lName" class="form-control" type="text" value="Scott" disabled>
+                                  </div>
+                                  <div class="col-12 col-md-6">
+                                      <label for="email">Email Address</label>
+                                      <input name="email" class="form-control" type="text" value="m.scott@info.com" disabled>
+                                  </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <button class="btn btn-lg btn-primary btn-block schedule-submit" name="edit">Edit Employee</button>
                                 </div>
-                                <div class="col-12 col-md-5">
-                                    <label for="exampleSelect2">Clients (select multiple):</label>
-                                    <select multiple class="form-control" id="exampleSelect2">
-                                      <option>Mark Johnson</option>
-                                      <option>Stacy Clark</option>
-                                      <option>Jacob Smith</option>
-                                      <option>Susan Ridgeway</option>
-                                      <option>Carlos Lopez</option>
-                                    </select>
-                                </div>
-                                <div class="col-12 col-md-3">
-                                    <label for="startTime" class="exampleSelect2">Start Time</label>
-                                    <input name="startTime" class="form-control" placeholder="Start time" type="text" id="startTime" value="">
-                                    <label for="endTime" class="sr-only">End Time</label>
+                                <div class="col-6">
+                                    <button class="btn btn-lg btn-primary btn-block schedule-submit" name="work">New Work Date</button>
                                 </div>
                             </div>
-                            <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Submit</button>
                             <br />
                           </form>
                       </div>

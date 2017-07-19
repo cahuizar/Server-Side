@@ -2,12 +2,12 @@
 <!--
 TITLE: Course Project 2
 AUTHOR: Carlos Huizar
-File Name: empSettings.php
+File Name: newWorkDay.php
 ORIGINALLY CREATED ON: 07/04/2017
 -->
 <html lang="en">
   <head>
-    <title>Employee | Settings</title>
+    <title>Manager | New Client</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
@@ -18,7 +18,7 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $fNameErr = $lNameErr = $emailErr = $passwordErr = "";
+          $dateErr = $startTimeErr = $selectErr = "";
           if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // logout button clicked
@@ -33,44 +33,27 @@ ORIGINALLY CREATED ON: 07/04/2017
                 header("Location: ../index.php");
             } else {
                 // get all the inputs from lab1.php
-                $fName = filter_input(INPUT_POST, 'fName');
-                $lName = filter_input(INPUT_POST, 'lName');
-                $email = filter_input(INPUT_POST, 'email');
-                $password = filter_input(INPUT_POST, 'password');
+                $date = filter_input(INPUT_POST, 'date');
+                $startTime = filter_input(INPUT_POST, 'startTime');
+                $clients = $_POST['clients'];
 
                 // use boolean to stop page from loading the next page
                 $errorFound = false;
 
                 // error if the first name is empty
-                if (empty($_POST["fName"])) {
-                    $fNameErr = "First Name is required";
+                if (empty($_POST["date"])) {
+                    $dateErr = "Date is required";
                     $errorFound = true;
                 } else {
-                    $fNameErr = "";
+                    $dateErr = "";
                 }
 
                 // error if the last name is empty
-                if (empty($_POST["lName"])) {
-                    $lNameErr = "Last name is required";
+                if (empty($_POST["startTime"])) {
+                    $startTimeErr = "Start time is required";
                     $errorFound = true;
                 } else {
-                    $lNameErr = "";
-                }
-
-                // error if the email is empty
-                if (empty($_POST["email"])) {
-                    $emailErr = "Email is required";
-                    $errorFound = true;
-                } else {
-                    $emailErr = "";
-                }
-
-                // error if the password length is less than 8
-                if (strlen($password) < 8) {
-                    $passwordErr = "Password must be atleast 8 characters";
-                    $errorFound = true;
-                } else {
-                    $passwordErr = "";
+                    $startTimeErr = "";
                 }
 
                 // do the following if no errors are found on the form
@@ -78,15 +61,12 @@ ORIGINALLY CREATED ON: 07/04/2017
                     session_start();
 
                     // store input text in session so that it can be used on display.php
-                    $_SESSION['fName'] = $fName;
-                    $_SESSION['lName'] = $lName;
-                    $_SESSION['email'] = $email;
-                    $_SESSION['confirmEmail'] = $confirmEmail;
-                    $_SESSION['password'] = $password;
-                    $_SESSION['confirmPassword'] = $confirmPassword;
+                    $_SESSION['empDate'] = $date;
+                    $_SESSION['empStartTime'] = $startTime;
+                    $_SESSION['empClients'] = $clients;
 
                     // go to display.php
-                    header("Location: settingsTest.php");
+                    header("Location: newWorkTest.php");
                     exit();
                 }
             }
@@ -101,20 +81,20 @@ ORIGINALLY CREATED ON: 07/04/2017
     <div class="collapse navbar-collapse" id="navbarColor03">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="empDashboard.php">Home</a>
+          <a class="nav-link" href="manDashboard.php">Home</a>
         </li>
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown active">
             <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Work
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="empSchedule.php">Schedule</a>
-              <a class="dropdown-item" href="empClients.php">Clients</a>
-              <a class="dropdown-item" href="empWork.php">Timesheet</a>
+              <a class="dropdown-item" href="manSchedule.php">Employees</a>
+              <a class="dropdown-item" href="manClients.php">Clients</a>
+              <a class="dropdown-item" href="manWork.php">Timesheet</a>
             </div>
         </li>
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Settings <span class="sr-only">(current)</span></a>
+        <li class="nav-item">
+          <a class="nav-link" href="manSettings.php">Settings <span class="sr-only">(current)</span></a>
         </li>
       </ul>
       <form class="form-inline" method="post">
@@ -124,38 +104,32 @@ ORIGINALLY CREATED ON: 07/04/2017
     </div>
   </nav>
   <div class="container">
-    <h1 class="pages-heading">Edit Profile</h1>
+    <h1 class="pages-heading">New Work Day</h1>
   	<hr>
 	<div class="row">
       <!-- edit form column -->
       <div class="col-md-9 personal-info">
         <form class="form-horizontal" method="post">
           <div class="form-group">
-            <label class="col-lg-3 control-label">First name:</label>
+            <label class="col-lg-3 control-label">Date:</label>
             <div class="col-lg-8">
-                <span class="error"><?php echo $fNameErr; ?></span>
-              <input class="form-control" value="John" type="text" name="fName">
+                <span class="error"><?php echo $dateErr; ?></span>
+                <input style="margin-top:5px;" name="date" class="form-control" placeholder="Date" type="text" id="datepicker">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-lg-3 control-label">Last name:</label>
+            <label class="col-lg-3 control-label">Start Time:</label>
             <div class="col-lg-8">
-              <span class="error"><?php echo $lNameErr; ?></span>
-              <input class="form-control" value="Smith" type="text" name="lName">
+                <span class="error"><?php echo $startTimeErr; ?></span>
+                <input style="margin-top:5px;" name="startTime" class="form-control" placeholder="Start time" type="text" id="startTime" value="">
             </div>
           </div>
           <div class="form-group">
-            <label class="col-lg-3 control-label">Email:</label>
+            <label class="col-lg-12 control-label">Clients (select multiple):</label>
             <div class="col-lg-8">
-              <span class="error"><?php echo $emailErr; ?></span>
-              <input class="form-control" value="janesemail@gmail.com" type="text" name="email">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="col-md-3 control-label">Password:</label>
-            <div class="col-md-8">
-              <span class="error"><?php echo $passwordErr; ?></span>
-              <input class="form-control" value="john1234" type="password" name="password">
+                <input type="checkbox" name="clients[]" value="Mark Johnson" checked> Mark Johnson<br />
+                <input type="checkbox" name="clients[]" value="Stacy Clark"> Stacy Clark<br />
+                <input type="checkbox" name="clients[]" value="Jacob Smith"> Jacob Smith<br />
             </div>
           </div>
           <div class="form-group">
@@ -171,5 +145,8 @@ ORIGINALLY CREATED ON: 07/04/2017
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="../js/pikaday.js"></script>
+    <script src="http://weareoutman.github.io/clockpicker/dist/jquery-clockpicker.min.js"></script>
+    <script src="../js/js.js"></script>
   </body>
 </html>
