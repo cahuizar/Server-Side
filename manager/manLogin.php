@@ -18,20 +18,61 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $Err = "";
+          require('Database.php');
+          $err = "";
+          session_start();
+
+          $db = Database::getDB();
+
           if ($_SERVER["REQUEST_METHOD"] == "POST") {
-              $email = filter_input(INPUT_POST, 'email');
-              $password = filter_input(INPUT_POST, 'password');
-              if($email == "cahuizar@test.com" && $password == "Test123") {
-                  session_start();
-                  // store input text in session so that it can be used on display.php
-                  $_SESSION['email'] = $email;
-                  header("Location: manDashboard.php");
+  
+              if($counter <= 5) {
+                  $email = filter_input(INPUT_POST, 'email');
+                  $password = filter_input(INPUT_POST, 'password');
+
+                  $query = "SELECT * FROM Employee 
+                            WHERE Employee.email=':email' 
+                            AND Employee.password=':password'
+                            JOIN Manager
+                            ON Employee.email = Manager.email";
+
+                  $statement = $db->prepare($sql);
+                  $statement->bindValue(":email", $email);
+                  $statement->bindValue(":password", $password);
+                  $statement->execute();
+                  $counter = $statement['counter'];
+                  $count = mysqli_num_rows($statement);
+                  $statement->closeCursor();
+                  if($count == 1 && $counter != 5) {
+                      $_SESSION['email'] = $email;
+                      $_SESSION['isLoggedIn'] = "yes";
+                      $query = "UPDATE Employee
+                                SET counter=':counter'
+                                WHERE email=':email'";
+
+                      $statement = $db->prepare($query);
+                      $statement->bindValue(":counter", 0);
+                      $statement->bindValue(":email", $email);
+                      $statement->execute();
+                      $statement->closeCursor();
+                      header("Location: manDashboard.php");
+                  } else {
+                      $counter += 1;
+                      $query = "UPDATE Employee
+                                SET counter=':counter'
+                                WHERE email=':email'";
+
+                      $statement = $db->prepare($query);
+                      $statement->bindValue(":counter", $counter);
+                      $statement->bindValue(":email", $email);
+                      $statement->execute();
+                      $statement->closeCursor();
+                      $err = "The email and password combination is incorrect";
+                  }
               } else {
-                  $Err = "Email or password combination is incorrect.";
+                  $err = "You have been locked out of your account";
               }
           }
-
       ?>
       <div class="container h-100">
         <div class="row h-100 justify-content-center align-items-center">
@@ -43,7 +84,7 @@ ORIGINALLY CREATED ON: 07/04/2017
               <input style="margin-top:5px;" name="email" id="inputEmail" class="form-control" placeholder="Email address" autofocus="" type="email">
               <label for="inputPassword" class="sr-only">Password</label>
               <input style="margin-top:5px;" name="password" id="inputPassword" class="form-control" placeholder="Password" type="password">
-              <span class="error"><?php echo $Err; ?></span>
+              <span class="error"><?php echo $err; ?></span>
               <button style="margin-top:15px;"class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
               <br />
               <div class="row">

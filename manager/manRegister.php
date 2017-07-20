@@ -7,7 +7,9 @@ ORIGINALLY CREATED ON: 07/04/2017
 -->
 
 <?php
-    $fNameErr = $lNameErr = $emailErr = $emailConfirmErr = $passwordErr = $passwordConfirmErr = "";
+    require('Database.php');
+    $fNameErr = $lNameErr = $emailErr = $emailConfirmErr = $passwordErr = $passwordConfirmErr = $serverErr = "";
+    $db = Database::getDB();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // get all the inputs from lab1.php
@@ -71,19 +73,36 @@ ORIGINALLY CREATED ON: 07/04/2017
 
         // do the following if no errors are found on the form
         if ($errorFound == false){
-            session_start();
-
-            // store input text in session so that it can be used on display.php
-            $_SESSION['fName'] = $fName;
-            $_SESSION['lName'] = $lName;
-            $_SESSION['email'] = $email;
-            $_SESSION['confirmEmail'] = $confirmEmail;
-            $_SESSION['password'] = $password;
-            $_SESSION['confirmPassword'] = $confirmPassword;
-
-            // go to display.php
-            header("Location: registerTest.php");
-            exit();
+            $query = "INSERT INTO Person (email, fName, lName)
+						          VALUES (:email, :fName, :lName)";
+            $statement = $db->prepare($query);
+            $statement->bindValue(":email", $email);
+            $statement->bindValue(":fName", $fName);
+            $statement->bindValue(":lName", $lName);
+            if(!$statement->execute()) {
+              $serverErr = "User already exists";
+              $statement->closeCursor();
+            } else {
+              $serverErr = "";
+              $statement->closeCursor();
+              $query = "INSERT INTO Employee (email, password)
+						            VALUES (:email, :password)";
+              $statement = $db->prepare($query);
+              $statement->bindValue(":email", $email);
+              $statement->bindValue(":password", $password);
+              $statement->execute();
+              $statement->closeCursor();
+              $query = "INSERT INTO Manager (email)
+						            VALUES (:email)";
+              $statement = $db->prepare($query);
+              $statement->bindValue(":email", $email);
+              $statement->execute();
+              $statement->closeCursor();
+              // go to registerTest.php
+              header("Location: manLogin.php");
+              exit();
+            }
+            
         }
 
     }
@@ -125,6 +144,7 @@ ORIGINALLY CREATED ON: 07/04/2017
           <label for="confirmPassword" class="sr-only">Confirm Password</label>
           <span class="error"><?php echo $passwordConfirmErr; ?></span>
           <input style="margin-top:5px;" name="confirmPassword" id="confirmPassword" class="form-control" placeholder=" Confirm password*" type="password">
+          <span class="error"><?php echo $serverErr; ?></span>
           <button style="margin-top:15px;"class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
           <br />
           <div class="row">

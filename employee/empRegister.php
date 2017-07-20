@@ -73,11 +73,10 @@ ORIGINALLY CREATED ON: 07/04/2017
 
         // do the following if no errors are found on the form
         if ($errorFound == false){
-            $query = "INSERT INTO Person (email, password, fName, lName)
-						          VALUES (:email, :password, :fName, :lName)";
+            $query = "INSERT INTO Person (email, fName, lName)
+						          VALUES (:email, :fName, :lName)";
             $statement = $db->prepare($query);
             $statement->bindValue(":email", $email);
-            $statement->bindValue(":password", $password);
             $statement->bindValue(":fName", $fName);
             $statement->bindValue(":lName", $lName);
             if(!$statement->execute()) {
@@ -86,7 +85,7 @@ ORIGINALLY CREATED ON: 07/04/2017
             } else {
               $serverErr = "";
               $statement->closeCursor();
-              $query = "INSERT INTO Employee (email)
+              $query = "INSERT INTO Employee (email, password)
 						            VALUES (:email, :password)";
               $statement = $db->prepare($query);
               $statement->bindValue(":email", $email);
@@ -94,10 +93,9 @@ ORIGINALLY CREATED ON: 07/04/2017
               $statement->execute();
               $statement->closeCursor();
               // go to registerTest.php
-              header("Location: registerTest.php");
+              header("Location: empLogin.php");
               exit();
             }
-            
             
         }
 

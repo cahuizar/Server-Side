@@ -18,24 +18,30 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $Err = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        require('Database.php');
+        session_start();
 
+        $db = Database::getDB();
+       
+        if($_SESSION['isLoggedIn'] === "yes") {
+
+          $email = $_SESSION['email'];
+          $fName = Database::getFName();
+          
+          if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // logout button clicked
             if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
-
+              // remove all from session from session
+              session_destroy();
+              header("Location: login.php");
             }
+
           }
-       ?>
+        } else {
+          header("Location: login.php");
+        }
+
+      ?>
     <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -62,7 +68,7 @@ ORIGINALLY CREATED ON: 07/04/2017
         </li>
       </ul>
       <form class="form-inline" method="post">
-        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
         <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
       </form>
     </div>
@@ -70,7 +76,7 @@ ORIGINALLY CREATED ON: 07/04/2017
   <div class="container h-75">
     <div class="row h-100 justify-content-center align-items-center">
       <div class="col">
-        <p class="heading">Welcome John</p>
+        <p class="heading">Welcome <span class="nav-name"> <?php echo $fName; ?></span></p>
         <p class="text-center form-text text-muted">
             Please select one of the one of the options on the navigation menu at the top of the page.
         </p>
