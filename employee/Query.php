@@ -1,5 +1,5 @@
 <?php
-    include('../Database.php')
+    include('../Database.php');
      /*
         All employee queries will go here
      */
@@ -7,9 +7,9 @@
         private static $dsn = "mysql:host=localhost;dbname=cahuizar_db";
         private static $username = "cahuizar";
         private static $password = "server123";
-        private string $db;
+        private static $db;
 
-        function __construct(argument)
+        function __construct()
         {
             if(!isset(self::$db)) {
                 try {
@@ -28,7 +28,7 @@
             $query = "SELECT count(*) as c FROM Employee
                       WHERE email= ?";
 
-            $statement = $db->prepare($query);
+            $statement = self::$db->prepare($query);
             $statement->execute(array($email));
             $row = $statement->fetch(PDO::FETCH_OBJ);
             $count = $row->c;
@@ -43,32 +43,31 @@
         {
             // INSERT data into person table
             $query = "INSERT INTO Person (email, fName, lName) VALUES (?, ?, ?)";
-            $statement = $db->prepare($query);
+            $statement = self::$db->prepare($query);
             $statement->execute(array($email, $fName, $lName));
 
             // INSERT data into Employee table
             $query = "INSERT INTO Employee (email, password, counter) VALUES (?, ?, ?)";
-            $statement = $db->prepare($query);
+            $statement = self::$db->prepare($query);
             $statement->execute(array($email, $password, $counter));
         }
 
         public function getFName($email) {
             // retrive the first name from database
             $query = "SELECT fName as c FROM Employee where email = ?";
-            $statement = $db->prepare($query);
+            $statement = self::$db->prepare($query);
             $statement->execute(array($email));
             $row = $statement->fetch(PDO::FETCH_OBJ);
             $fName = $row->c;
             return $fName;
         }
 
-
         public function setCounter($email, $counter) {
             $query = "UPDATE User
                       SET counter= ?
                       WHERE email= ?";
 
-            $statement = $db->prepare($query);
+            $statement = self::$db->prepare($query);
             $statement->execute(array($counter, $email));
         }
 
@@ -77,7 +76,7 @@
             $query = "SELECT counter as attempts FROM User
                       WHERE email= ?";
 
-            $statement = $db->prepare($query);
+            $statement = self::$db->prepare($query);
             $statement->execute(array($email));
    		    $row = $statement->fetch(PDO::FETCH_OBJ);
             $attempts = $row->attempts;
@@ -86,6 +85,4 @@
         }
 
     }
-
-
  ?>

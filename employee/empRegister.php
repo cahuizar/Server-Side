@@ -9,6 +9,7 @@ ORIGINALLY CREATED ON: 07/04/2017
 <?php
     require('Query.php');
     $query = new Query();
+    $fNameErr = $lNameErr = $emailErr = $emailConfirmErr = $passwordErr = $passwordConfirmErr = $err = "";
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // get all the inputs from lab1.php
@@ -74,9 +75,10 @@ ORIGINALLY CREATED ON: 07/04/2017
         if ($errorFound == false){
             // display error if the email already exists
             if($query->empExists($email)) {
-              $serverErr = "User already exists";
+              $err = "User already exists";
             } else {
-              $serverErr = "";
+              $err = "";
+              $counter = 0;
               // create new employee
               $query->newEmp($email, $password, $fName, $lName, $counter);
               // go to empLogin.php
@@ -125,7 +127,7 @@ ORIGINALLY CREATED ON: 07/04/2017
               <label for="confirmPassword" class="sr-only">Confirm Password</label>
               <span class="error"><?php echo $passwordConfirmErr; ?></span>
               <input style="margin-top:5px;" name="confirmPassword" id="confirmPassword" class="form-control" placeholder=" Confirm password*" type="password">
-              <span class="error"><?php echo $serverErr; ?></span>
+              <span class="error"><?php echo $err; ?></span>
               <button style="margin-top:15px;"class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
               <br />
               <div class="row">
