@@ -7,9 +7,8 @@ ORIGINALLY CREATED ON: 07/04/2017
 -->
 
 <?php
-    require('Database.php');
-    $fNameErr = $lNameErr = $emailErr = $emailConfirmErr = $passwordErr = $passwordConfirmErr = $serverErr = "";
-    $db = Database::getDB();
+    require('Query.php');
+    $query = new Query();
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // get all the inputs from lab1.php
@@ -73,30 +72,17 @@ ORIGINALLY CREATED ON: 07/04/2017
 
         // do the following if no errors are found on the form
         if ($errorFound == false){
-            $query = "INSERT INTO Person (email, fName, lName)
-						          VALUES (:email, :fName, :lName)";
-            $statement = $db->prepare($query);
-            $statement->bindValue(":email", $email);
-            $statement->bindValue(":fName", $fName);
-            $statement->bindValue(":lName", $lName);
-            if(!$statement->execute()) {
+            // display error if the email already exists
+            if($query->empExists($email)) {
               $serverErr = "User already exists";
-              $statement->closeCursor();
             } else {
               $serverErr = "";
-              $statement->closeCursor();
-              $query = "INSERT INTO Employee (email, password)
-						            VALUES (:email, :password)";
-              $statement = $db->prepare($query);
-              $statement->bindValue(":email", $email);
-              $statement->bindValue(":password", $password);
-              $statement->execute();
-              $statement->closeCursor();
-              // go to registerTest.php
+              // create new employee
+              $query->newEmp($email, $password, $fName, $lName, $counter);
+              // go to empLogin.php
               header("Location: empLogin.php");
-              exit();
             }
-            
+
         }
 
     }

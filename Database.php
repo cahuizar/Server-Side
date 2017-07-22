@@ -4,7 +4,6 @@
         private static $username = "cahuizar";
         private static $password = "server123";
         private static $db;
-        private static $fName;
 
         private function __construct() { }
 
@@ -19,17 +18,6 @@
                 }
             }
             return self::$db;
-        }
-
-        public static function getFName($email) {
-            $sql = "SELECT fName FROM Employee where email = ':email'";
-            $statement = self::$db->prepare($sql);
-            $statement->bindValue(":email", $email);
-            $statement->execute();
-            $row = $statement->fetchAll();
-            $statement->closeCursor();
-            self::$fName = $row['fName'];
-            return self::$fName;
         }
     }
 ?>

@@ -18,20 +18,20 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          require('Database.php');
+          require('../Database.php');
           $err = "";
           session_start();
 
           $db = Database::getDB();
 
           if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  
+
               if($counter <= 5) {
                   $email = filter_input(INPUT_POST, 'email');
                   $password = filter_input(INPUT_POST, 'password');
 
-                  $query = "SELECT * FROM Employee 
-                            WHERE email=':email' 
+                  $query = "SELECT * FROM Employee
+                            WHERE email=':email'
                             AND password=':password'";
 
                   $statement = $db->prepare($sql);
