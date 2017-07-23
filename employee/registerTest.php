@@ -7,30 +7,39 @@ ORIGINALLY CREATED ON: 07/04/2017
 -->
 
 <?php
-
+	$fName = "";
+	require('Query.php');
 	session_start();
+	$query = new Query();
+	$loggedIn = $_SESSION['isLoggedIn'];
+	$email = $_SESSION['email'];
+	// allow access if the user is logged in
+	if($loggedIn == "yes") {
+		// retrive the first name from database
+		$fName = $query->getFName($email);
+		// logout, kill session and send user to login page
+		if ($_SERVER["REQUEST_METHOD"] == "POST") {
+			// logout button clicked
+	        if (isset($_POST['logout'])) {
+				// remove all from session from session
+				session_destroy();
+				header("Location: empLogin.php?l=q");
+	        }
+			else {
+				// get all the inputs from the session
+			    $fName = $_SESSION['fName'];
+			    $lName = $_SESSION['lName'];
+			    $email = $_SESSION['email'];
+			    $confirmEmail = $_SESSION['confirmEmail'];
+			    $password = $_SESSION['password'];
+			    $confirmPassword = $_SESSION['confirmPassword'];
+			}
 
-    // get all the inputs from the session
-    $fName = $_SESSION['fName'];
-    $lName = $_SESSION['lName'];
-    $email = $_SESSION['email'];
-    $confirmEmail = $_SESSION['confirmEmail'];
-    $password = $_SESSION['password'];
-    $confirmPassword = $_SESSION['confirmPassword'];
-
-	if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-      // logout button clicked
-      if (isset($_POST['logout'])) {
-          session_start();
-          unset($_SESSION['fName']);
-          unset($_SESSION['lName']);
-          unset($_SESSION['email']);
-          unset($_SESSION['confirmEmail']);
-          unset($_SESSION['password']);
-          unset($_SESSION['confirmPasssword']);
-          header("Location: ../index.php");
-      }
+		}
+		// redirect back to login and display error message
+	} else {
+		header("Location: empLogin.php?l=r");
+	}
  ?>
 
 <html lang="en">

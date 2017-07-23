@@ -18,57 +18,61 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          require('../Database.php');
+          require('Query.php');
+          $query = new Query();
           $err = "";
           session_start();
-
-          $db = Database::getDB();
-
           if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-              if($counter <= 5) {
-                  $email = filter_input(INPUT_POST, 'email');
-                  $password = filter_input(INPUT_POST, 'password');
-
-                  $query = "SELECT * FROM Employee
-                            WHERE email=':email'
-                            AND password=':password'";
-
-                  $statement = $db->prepare($sql);
-                  $statement->bindValue(":email", $email);
-                  $statement->bindValue(":password", $password);
-                  $statement->execute();
-                  $counter = $statement['counter'];
-                  $count = mysqli_num_rows($statement);
-                  $statement->closeCursor();
-                  if($count == 1 && $counter != 5) {
-                      $_SESSION['email'] = $email;
-                      $_SESSION['isLoggedIn'] = "yes";
-                      $query = "UPDATE Employee
-                                SET counter=':counter'
-                                WHERE email=':email'";
-
-                      $statement = $db->prepare($query);
-                      $statement->bindValue(":counter", 0);
-                      $statement->bindValue(":email", $email);
-                      $statement->execute();
-                      $statement->closeCursor();
-                      header("Location: empDashboard.php");
-                  } else {
-                      $counter += 1;
-                      $query = "UPDATE Employee
-                                SET counter=':counter'
-                                WHERE email=':email'";
-
-                      $statement = $db->prepare($query);
-                      $statement->bindValue(":counter", $counter);
-                      $statement->bindValue(":email", $email);
-                      $statement->execute();
-                      $statement->closeCursor();
-                      $err = "The email and password combination is incorrect";
-                  }
+              $email = filter_input(INPUT_POST, 'email');
+              $password = filter_input(INPUT_POST, 'password');
+              // get total attempts made by the email user
+              $attempts = $query->getCounter($email);
+              $validCredentials = $query->login($email, $password);
+              // on 4th unsuccessful try, session a time and inrement number of attempts
+              if($attempts == 4) {
+                  $_SESSION['timeout'] = time();
+                  $attempts =  $attempts + 1;
+                  // icrement number of attempts
+                  $query->setCounter($email, $attempts);
+               }
+               // increment number of attempts made by user
+              else {
+                  $temp_attempts =  $attempts + 1;
+                  $query->setCounter($email, $temp_attempts);
+              }
+              // succesful credentials, reset attempts and log user in
+              if($validCredentials && $attempts < 5) {
+                  $_SESSION['email'] = $email;
+                  $_SESSION['isLoggedIn'] = "yes";
+                  $attempts = 0;
+                  // reset counter
+                  $query->setCounter($email, $attempts);
+                  header("Location: empDashboard.php");
+              }
+              // attempts is larger than 5 then tell user he/she are locked out for 15 mins
+              else if ($attempts >= 5 ) {
+                  $err = "You have been locked out of your account. ";
+                  if ($_SESSION['timeout'] + 10 * 60 < time()) {
+                    $attempts = 0;
+                    // reset counter
+                    $query->setCounter($email, $attempts);
+                    session_destroy();
+                 }
               } else {
-                  $err = "You have been locked out of your account";
+                  $err = "Username or password combination is incorrect.";
+              }
+          } else {
+              if (isset($_GET['l']))
+              {
+                  $tag = $_GET['l'];
+                   //if the user is redirected from the home page
+                  if ($tag == 'r') {
+                      $err = "You must be logged in to access the page.";
+                  }
+                  // user message when they logout
+                  else if ($tag == 'q') {
+                      $err = "You have been successfully logged out.";
+                  }
               }
           }
       ?>
@@ -82,7 +86,7 @@ ORIGINALLY CREATED ON: 07/04/2017
               <input style="margin-top:5px;" name="email" id="inputEmail" class="form-control" placeholder="Email address" autofocus="" type="email">
               <label for="inputPassword" class="sr-only">Password</label>
               <input style="margin-top:5px;" name="password" id="inputPassword" class="form-control" placeholder="Password" type="password">
-              <span class="error"><?php echo $err; ?></span>
+              <span class="error"><?php echo $err; ?></span><br />
               <button style="margin-top:15px;"class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
               <br />
               <div class="row">

@@ -18,28 +18,37 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-        require('Database.php');
-        session_start();
-
-        $db = Database::getDB();
-       
-        if($_SESSION['isLoggedIn'] === "yes") {
-
+          $message = $fName = "";
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
           $email = $_SESSION['email'];
-          $fName = Database::getFName();
-          
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-              // remove all from session from session
-              session_destroy();
-              header("Location: login.php");
-            }
-
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+              if (isset($_GET['l'])) {
+                  $tag = $_GET['l'];
+                   // user settings changed
+                  if ($tag == 'settings') {
+                      $message = "Your profile details have been updated.";
+                  }
+                  // timesheet created
+                  else if ($tag == 'timesheet') {
+                      $message = "You have created a new timesheet.";
+                  }
+              }
+              // retrive the first name from database
+              $fName = $query->getFName($email);
+              // logout, kill session and send user to login page
+              if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: empLogin.php?l=q");
+              }
+              // redirect back to login and display error message
+          } else {
+              header("Location: empLogin.php?l=r");
           }
-        } else {
-          header("Location: login.php");
-        }
 
       ?>
     <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
@@ -79,6 +88,9 @@ ORIGINALLY CREATED ON: 07/04/2017
         <p class="heading">Welcome <span class="nav-name"> <?php echo $fName; ?></span></p>
         <p class="text-center form-text text-muted">
             Please select one of the one of the options on the navigation menu at the top of the page.
+        </p>
+        <p class="text-center form-text text-success">
+            <?php echo $message; ?>
         </p>
     </div>
   </div>
