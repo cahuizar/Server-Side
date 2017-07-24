@@ -36,6 +36,9 @@ ORIGINALLY CREATED ON: 07/04/2017
                   else if ($tag == 'timesheet') {
                       $message = "You have created a new timesheet.";
                   }
+                  else {
+                    $message = "Unkown error... Please report to manager";
+                  }
               }
               // retrive the first name from database
               $fName = $query->getFName($email);

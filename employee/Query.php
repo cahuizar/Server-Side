@@ -70,6 +70,15 @@
             $statement->execute(array($email, $password, $counter));
         }
 
+        public function newTimesheet($email, $date, $startTime, $endTime)
+        {
+            // INSERT data into timesheet table
+            $query = "INSERT INTO Timesheet (email, date, startTime, endTime) VALUES (?, ?, ?, ?)";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email, $date, $startTime, $endTime));
+
+        }
+
         public function updateEmp($curEmail, $email, $password, $fName, $lName, $counter)
         {
             // Update Person table
@@ -89,7 +98,7 @@
         }
 
         public function getEmp($email) {
-            // retrive the first name from database
+            // retrieve the employees information
             $query = "SELECT Person.email, Person.fName, Person.lName,
                       Employee.password
                       FROM Person
@@ -101,9 +110,36 @@
             $row = $statement->fetch(PDO::FETCH_OBJ);
             return $row;
         }
+
+        public function getClients() {
+            // retrieve the clients information
+            $query = "SELECT count(*) as results, Person.email, Person.fName, Person.lName,
+                      Client.password, Client.address, Client.telephone
+                      FROM Person
+                      JOIN Client
+                      ON Person.email = Client.email";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email));
+            $row = $statement->fetch(PDO::FETCH_OBJ);
+            return $row;
+        }
+
+        public function getEmpSchedule($email) {
+            // retrieve the the employees working schedule
+            $query = "SELECT count(*) as results, Person.email, Person.fName, Person.lName,
+                      Client.password, Client.address, Client.telephone
+                      FROM Person
+                      JOIN Client
+                      ON Person.email = Client.email";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email));
+            $row = $statement->fetch(PDO::FETCH_OBJ);
+            return $row;
+        }
+
         public function getFName($email) {
 
-            // retrive the first name from database
+            // retrieve the first name from database
             $query = "SELECT Person.fName as fName
                       FROM Person
                       JOIN Employee

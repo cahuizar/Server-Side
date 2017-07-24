@@ -4,6 +4,31 @@ TITLE: Course Project 2
 AUTHOR: Carlos Huizar
 File Name: empClients.php
 ORIGINALLY CREATED ON: 07/04/2017
+
+          $empty = "";
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
+          $email = $_SESSION['email'];
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              // retrive the first name from database
+              $fName = $query->getFName($email);
+              // logout button clicked
+              if (isset($_POST['logout'])) {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: empLogin.php?l=q");
+              } else {
+                  
+              }
+            }
+          // redirect back to login and display error message
+          } else {
+              header("Location: empLogin.php?l=r");
+          }
 -->
 <html lang="en">
   <head>
@@ -18,23 +43,29 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $Err = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
-
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
+          $email = $_SESSION['email'];
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+            // retrive the first name from database
+            $fName = $query->getFName($email);
+            $clients = $query->getClients();
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              // logout button clicked
+              if (isset($_POST['logout'])) {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: empLogin.php?l=q");
+              }
             }
+          // redirect back to login and display error message
+          } else {
+              header("Location: empLogin.php?l=r");
           }
+         
        ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,14 +93,48 @@ ORIGINALLY CREATED ON: 07/04/2017
             </li>
           </ul>
           <form class="form-inline" method="post">
-            <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+            <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
             <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
           </form>
         </div>
       </nav>
       <div class="container">
         <h1 class="pages-heading">Clients Information</h1>
-        <table class="table table-hover work-schedule">
+         <?php
+            // display clients information if there are any existing
+            if($clients[0]->results >= 1) {
+                echo '
+                  <table class="table table-hover work-schedule">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Email Address</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                ';
+				        foreach($clients as $client) {
+        			    echo "
+                    <tr>
+                      <th scope='row'>". $client['fName'] ." ". $client['lName'] ."</th>
+                      <td>". $client['address'] ."</td>
+                      <td>". $client['telephone'] ."</td>
+                      <td>". $client['email'] ."</td>
+                    </tr>
+                  
+                  ";
+    			      }
+                echo '
+                    </tbody>
+                  </table>
+                ';
+            } else {
+              echo '<p class="no-results text-center">There are no clients, please contact your manager to get clients added.</p>';
+            }
+         ?>
+        <!--<table class="table table-hover work-schedule">
           <thead>
             <tr>
               <th>Name</th>
@@ -98,7 +163,7 @@ ORIGINALLY CREATED ON: 07/04/2017
               <td>scott.jensen@gmail.com</td>
             </tr>
           </tbody>
-      </table>
+      </table>-->
       </div>
       <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>

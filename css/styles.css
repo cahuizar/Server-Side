@@ -384,3 +384,9 @@ a.font-icons{
 .work-schedule{
     margin-top: 50px;
 }
+
+.no-results {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+}

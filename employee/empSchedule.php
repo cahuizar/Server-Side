@@ -18,23 +18,29 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $Err = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
-
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
+          $email = $_SESSION['email'];
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+            // retrive the first name from database
+            $fName = $query->getFName($email);
+            $clients = $query->getEmpSchedule($email);
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              // logout button clicked
+              if (isset($_POST['logout'])) {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: empLogin.php?l=q");
+              }
             }
+          // redirect back to login and display error message
+          } else {
+              header("Location: empLogin.php?l=r");
           }
+         
        ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,7 +68,7 @@ ORIGINALLY CREATED ON: 07/04/2017
             </li>
           </ul>
           <form class="form-inline" method="post">
-            <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+            <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
             <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
           </form>
         </div>
