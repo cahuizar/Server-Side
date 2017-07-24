@@ -70,12 +70,6 @@ ORIGINALLY CREATED ON: 07/04/2017
 
                   // do the following if no errors are found on the form
                   if ($errorFound == false){
-                      session_start();
-
-                      // store input text in session so that it can be used on display.php
-                      $_SESSION['date'] = $date;
-                      $_SESSION['startTime'] = $startTime;
-                      $_SESSION['endTime'] = $endTime;
                       $query->newTimesheet($email, $date, $startTime, $endTime);
 
                       // go to dashboard.php and display successful message

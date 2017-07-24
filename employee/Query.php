@@ -104,7 +104,7 @@
                       FROM Person
                       JOIN Employee
                       ON Person.email = Employee.email
-                      where Employee.email = 'test@test.com'";
+                      where Employee.email = ?";
             $statement = self::$db->prepare($query);
             $statement->execute(array($email));
             $row = $statement->fetch(PDO::FETCH_OBJ);
@@ -119,18 +119,20 @@
                       JOIN Client
                       ON Person.email = Client.email";
             $statement = self::$db->prepare($query);
-            $statement->execute(array($email));
+            $statement->execute();
             $row = $statement->fetch(PDO::FETCH_OBJ);
             return $row;
         }
 
         public function getEmpSchedule($email) {
             // retrieve the the employees working schedule
-            $query = "SELECT count(*) as results, Person.email, Person.fName, Person.lName,
-                      Client.password, Client.address, Client.telephone
+            $query = "SELECT count(*) as results, WorkDate.date, Person.fName, Person.lName, WorkDate.startTime,
                       FROM Person
-                      JOIN Client
-                      ON Person.email = Client.email";
+                      JOIN Employee
+                      ON Person.email = Employee.email
+                      JOIN WorkDate
+                      ON Person.email = WorkDate.empEmail
+                      WHERE WorkDate.empEmail = ?";
             $statement = self::$db->prepare($query);
             $statement->execute(array($email));
             $row = $statement->fetch(PDO::FETCH_OBJ);

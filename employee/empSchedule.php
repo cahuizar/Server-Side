@@ -27,7 +27,7 @@ ORIGINALLY CREATED ON: 07/04/2017
           if($loggedIn == "yes") {
             // retrive the first name from database
             $fName = $query->getFName($email);
-            $clients = $query->getEmpSchedule($email);
+            $schedule = $query->getEmpSchedule($email);
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
               // logout button clicked
               if (isset($_POST['logout'])) {
@@ -75,6 +75,36 @@ ORIGINALLY CREATED ON: 07/04/2017
       </nav>
       <div class="container">
         <h1 class="pages-heading">Schedule </h1>
+        <?php
+            if($schedules[0]->c >= 1) {
+              echo '
+                <table class="table table-hover work-schedule">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Clients</th>
+                      <th>Start Time</th>
+                    </tr>
+                  </thead>
+                <tbody>              
+              ';
+              foreach($schedules as $schedule) {
+                echo "
+                  <tr>
+                    <th scope='row'>". $schedule['date'] ."</th>
+                    <th>". $schedule['fName'] ." ". $schedule['lName'] ."</th>
+                    <td>". $schedule['startTime'] ."</td>
+                  </tr>
+                ";
+              }
+              echo '
+                  </tbody>
+                </table>
+              ';
+            } else {
+              echo '<p class="no-results text-center"></p>'
+            }
+        ?>
         <table class="table table-hover work-schedule">
           <thead>
             <tr>

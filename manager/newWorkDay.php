@@ -125,11 +125,11 @@ ORIGINALLY CREATED ON: 07/04/2017
             </div>
           </div>
           <div class="form-group">
-            <label class="col-lg-12 control-label">Clients (select multiple):</label>
+            <label class="col-lg-12 control-label">Client:</label>
             <div class="col-lg-8">
-                <input type="checkbox" name="clients[]" value="Mark Johnson" checked> Mark Johnson<br />
-                <input type="checkbox" name="clients[]" value="Stacy Clark"> Stacy Clark<br />
-                <input type="checkbox" name="clients[]" value="Jacob Smith"> Jacob Smith<br />
+                <input type="radio" name="clients" value="Mark Johnson" checked> Mark Johnson<br />
+                <input type="radio" name="clients" value="Stacy Clark"> Stacy Clark<br />
+                <input type="radio" name="clients" value="Jacob Smith"> Jacob Smith<br />
             </div>
           </div>
           <div class="form-group">
