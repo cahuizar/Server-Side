@@ -128,10 +128,10 @@
             // retrieve the the employees working schedule
             $query = "SELECT count(*) as results, WorkDate.date, Person.fName, Person.lName, WorkDate.startTime,
                       FROM Person
-                      JOIN Employee
-                      ON Person.email = Employee.email
+                      JOIN Client
+                      ON Person.email = Client.email
                       JOIN WorkDate
-                      ON Person.email = WorkDate.empEmail
+                      ON Client.email = WorkDate.clientEmail
                       WHERE WorkDate.empEmail = ?";
             $statement = self::$db->prepare($query);
             $statement->execute(array($email));

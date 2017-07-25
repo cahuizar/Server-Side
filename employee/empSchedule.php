@@ -76,7 +76,7 @@ ORIGINALLY CREATED ON: 07/04/2017
       <div class="container">
         <h1 class="pages-heading">Schedule </h1>
         <?php
-            if($schedules[0]->c >= 1) {
+            if($schedules[0]->results >= 1) {
               echo '
                 <table class="table table-hover work-schedule">
                   <thead>
