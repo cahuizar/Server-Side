@@ -73,6 +73,10 @@ ORIGINALLY CREATED ON: 07/04/2017
                   else if ($tag == 'q') {
                       $err = "You have been successfully logged out.";
                   }
+                  // user message when they logout
+                  else if ($tag == 'settings') {
+                      $err = "You have been registered, please login.";
+                  }
               }
           }
       ?>

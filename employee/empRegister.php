@@ -82,7 +82,7 @@ ORIGINALLY CREATED ON: 07/04/2017
               // create new employee
               $query->newEmp($email, $password, $fName, $lName, $counter);
               // go to empLogin.php
-              header("Location: empLogin.php");
+              header("Location: empLogin.php?l=register");
             }
 
         }
