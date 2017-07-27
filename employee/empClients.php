@@ -4,31 +4,6 @@ TITLE: Course Project 2
 AUTHOR: Carlos Huizar
 File Name: empClients.php
 ORIGINALLY CREATED ON: 07/04/2017
-
-          $empty = "";
-          require('Query.php');
-          session_start();
-          $query = new Query();
-          $loggedIn = $_SESSION['isLoggedIn'];
-          $email = $_SESSION['email'];
-          // allow access if the user is logged in
-          if($loggedIn == "yes") {
-            if ($_SERVER["REQUEST_METHOD"] == "POST") {
-              // retrive the first name from database
-              $fName = $query->getFName($email);
-              // logout button clicked
-              if (isset($_POST['logout'])) {
-                  // remove all from session from session
-                  session_destroy();
-                  header("Location: empLogin.php?l=q");
-              } else {
-                  
-              }
-            }
-          // redirect back to login and display error message
-          } else {
-              header("Location: empLogin.php?l=r");
-          }
 -->
 <html lang="en">
   <head>
@@ -53,6 +28,7 @@ ORIGINALLY CREATED ON: 07/04/2017
             // retrive the first name from database
             $fName = $query->getFName($email);
             $clients = $query->getClients();
+            $results = $clients[0];
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
               // logout button clicked
               if (isset($_POST['logout'])) {
@@ -65,7 +41,7 @@ ORIGINALLY CREATED ON: 07/04/2017
           } else {
               header("Location: empLogin.php?l=r");
           }
-         
+
        ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -102,7 +78,7 @@ ORIGINALLY CREATED ON: 07/04/2017
         <h1 class="pages-heading">Clients Information</h1>
          <?php
             // display clients information if there are any existing
-            if($clients[0]->results >= 1) {
+            if($results >= 1) {
                 echo '
                   <table class="table table-hover work-schedule">
                     <thead>
@@ -123,7 +99,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                       <td>". $client['telephone'] ."</td>
                       <td>". $client['email'] ."</td>
                     </tr>
-                  
+
                   ";
     			      }
                 echo '
@@ -134,36 +110,6 @@ ORIGINALLY CREATED ON: 07/04/2017
               echo '<p class="no-results text-center">There are no clients, please contact your manager to get clients added.</p>';
             }
          ?>
-        <!--<table class="table table-hover work-schedule">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Address</th>
-              <th>Phone Number</th>
-              <th>Email Address</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Hailey Pols</th>
-              <td>1234 ollio Dr</td>
-              <td>317-409-3814</td>
-              <td>hailey.pols@info.com</td>
-            </tr>
-            <tr>
-              <th scope="row">Miley Cirus</th>
-              <td>1976 cirrus ST</td>
-              <td>847-697-1289</td>
-              <td>miley.cirus@help.com</td>
-            </tr>
-            <tr>
-              <th scope="row">Scott Jensen</th>
-              <td>7982 smith Dr</td>
-              <td>987-424-9872</td>
-              <td>scott.jensen@gmail.com</td>
-            </tr>
-          </tbody>
-      </table>-->
       </div>
       <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>

@@ -27,7 +27,8 @@ ORIGINALLY CREATED ON: 07/04/2017
           if($loggedIn == "yes") {
             // retrive the first name from database
             $fName = $query->getFName($email);
-            $schedule = $query->getEmpSchedule($email);
+            $schedules = $query->getEmpSchedule($email);
+            $results = $schedules[0];
             if ($_SERVER["REQUEST_METHOD"] == "POST") {
               // logout button clicked
               if (isset($_POST['logout'])) {
@@ -40,7 +41,7 @@ ORIGINALLY CREATED ON: 07/04/2017
           } else {
               header("Location: empLogin.php?l=r");
           }
-         
+
        ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +77,7 @@ ORIGINALLY CREATED ON: 07/04/2017
       <div class="container">
         <h1 class="pages-heading">Schedule </h1>
         <?php
-            if($schedules[0]->results >= 1) {
+            if($results[0] >= 1) {
               echo '
                 <table class="table table-hover work-schedule">
                   <thead>
@@ -86,7 +87,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                       <th>Start Time</th>
                     </tr>
                   </thead>
-                <tbody>              
+                <tbody>
               ';
               foreach($schedules as $schedule) {
                 echo "
@@ -102,35 +103,9 @@ ORIGINALLY CREATED ON: 07/04/2017
                 </table>
               ';
             } else {
-              echo '<p class="no-results text-center"></p>'
+              echo '<p class="no-results text-center">You do not have a schedule, contact your manager.</p>';
             }
         ?>
-        <table class="table table-hover work-schedule">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Clients</th>
-              <th>Start Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">07/2/17</th>
-              <td>Mark Johnson Stacy Clark</td>
-              <td>7:30 am</td>
-            </tr>
-            <tr>
-              <th scope="row">07/3/17</th>
-              <td>Jacob Smith Susan Ridgeway</td>
-              <td>8:00 am</td>
-            </tr>
-            <tr>
-               <th scope="row">07/4/17</th>
-               <td>Carlos Lopez</td>
-               <td>11:00 am</td>
-            </tr>
-          </tbody>
-      </table>
       </div>
       <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>

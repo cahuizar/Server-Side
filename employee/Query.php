@@ -113,20 +113,19 @@
 
         public function getClients() {
             // retrieve the clients information
-            $query = "SELECT count(*) as results, Person.email, Person.fName, Person.lName,
-                      Client.password, Client.address, Client.telephone
+            $query = "SELECT count(*) as results, Person.email, Person.fName, Person.lName, Client.address, Client.telephone
                       FROM Person
                       JOIN Client
                       ON Person.email = Client.email";
             $statement = self::$db->prepare($query);
             $statement->execute();
-            $row = $statement->fetch(PDO::FETCH_OBJ);
+            $row = $statement->fetchAll();
             return $row;
         }
 
         public function getEmpSchedule($email) {
             // retrieve the the employees working schedule
-            $query = "SELECT count(*) as results, WorkDate.date, Person.fName, Person.lName, WorkDate.startTime,
+            $query = "SELECT count(*) as results, WorkDate.date, Person.fName, Person.lName, WorkDate.startTime
                       FROM Person
                       JOIN Client
                       ON Person.email = Client.email
@@ -135,7 +134,7 @@
                       WHERE WorkDate.empEmail = ?";
             $statement = self::$db->prepare($query);
             $statement->execute(array($email));
-            $row = $statement->fetch(PDO::FETCH_OBJ);
+            $row = $statement->fetchAll();
             return $row;
         }
 
