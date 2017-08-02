@@ -104,6 +104,34 @@
 
         }
 
+        public function updateClient($curEmail, $email, $fName, $lName, $telephone, $address)
+        {
+            // Update Person table
+            $query = "UPDATE Person
+                      SET fName = ?, lName = ?, email = ?
+                      WHERE email = ?";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($fName, $lName, $email, $curEmail));
+
+            // Update Employee table
+            $query = "UPDATE Client
+                      SET address = ?, telephone = ?
+                      WHERE email = ?";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($address, $telephone, $email));
+
+        }
+
+        public function deletePerson($email)
+        {
+            // Delete Person table
+            $query = "DELETE FROM Person
+                      WHERE email = ?";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email));
+
+        }
+
         public function newEmp($email, $password, $fName, $lName, $counter)
         {
             // INSERT data into person table
@@ -164,6 +192,19 @@
             return $row;
         }
 
+        public function getEmployees() {
+            // retrieve the employees information
+            $query = "SELECT count(*) as results, Employee.email, Person.fName, Person.lName,
+                      Employee.password
+                      FROM Person
+                      JOIN Employee
+                      ON Person.email = Employee.email";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email));
+            $row = $statement->fetch(PDO::FETCH_OBJ);
+            return $row;
+        }
+
         public function getClients() {
             // retrieve the clients information
             $query = "SELECT count(*) as results, Person.email, Person.fName, Person.lName,
@@ -217,6 +258,7 @@
             $statement = self::$db->prepare($query);
             $statement->execute(array($counter, $email));
         }
+        
 
         public function getCounter($email) {
             // retrieve the number of tries the user has done to login

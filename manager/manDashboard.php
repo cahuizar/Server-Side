@@ -44,6 +44,22 @@ ORIGINALLY CREATED ON: 07/04/2017
               else if ($tag == 'newClient') {
                   $message = "You have created a new client.";
               }
+              // client updated
+              else if ($tag == 'updateClient') {
+                  $message = "Client has been updated.";
+              }
+              // client deleted
+              else if ($tag == 'deleteClient') {
+                  $message = "Client has been deleted.";
+              }
+              // employee updated
+              else if ($tag == 'updateEmp') {
+                  $message = "Employee has been updated.";
+              }
+              // employee deleted
+              else if ($tag == 'deleteEmp') {
+                  $message = "Employee has been deleted.";
+              }
               else {
                 $message = "Unkown error... Please report to manager";
               }

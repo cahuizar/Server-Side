@@ -19,22 +19,32 @@ ORIGINALLY CREATED ON: 07/04/2017
   <body>
       <?php
           $fNameErr = $lNameErr = $emailErr = $passwordErr = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
+          $email = $_SESSION['email'];
+          $empEmail = $_SESSION['empEmail'];
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+            // retrive the first name from database
+            $fName = $query->getFName($email);
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              // logout button clicked
+              if (isset($_POST['logout'])) {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: manLogin.php?l=q");
+              } 
+              // logout button clicked
+              else if (isset($_POST['delete'])) {
+                  // remove all from session from session
+                  $query->deletePerson($empEmail);
+                  header("Location: manLogin.php?l=deleteEmp");
+              }else {
                 // get all the inputs from lab1.php
-                $fName = filter_input(INPUT_POST, 'fName');
-                $lName = filter_input(INPUT_POST, 'lName');
+                $empFName = filter_input(INPUT_POST, 'fName');
+                $empLName = filter_input(INPUT_POST, 'lName');
                 $email = filter_input(INPUT_POST, 'email');
                 $password = filter_input(INPUT_POST, 'password');
 
@@ -72,23 +82,18 @@ ORIGINALLY CREATED ON: 07/04/2017
                 } else {
                     $passwordErr = "";
                 }
-
                 // do the following if no errors are found on the form
-                if ($errorFound == false){
-                    session_start();
+              if ($errorFound == false){
+                  $query->updateEmp($curEmail, $email, $password, $empFName, $empLName, $counter);
 
-                    // store input text in session so that it can be used on display.php
-                    $_SESSION['empFName'] = $fName;
-                    $_SESSION['empLName'] = $lName;
-                    $_SESSION['empEmail'] = $email;
-                    $_SESSION['empPassword'] = $password;
-
-                    // go to display.php
-                    header("Location: editEmployeeTest.php");
-                    exit();
-                }
+                  // go to dashboard.php and display successful message
+                  header("Location: manDashboard.php?l=updateEmp");
+              }
             }
           }
+        } else {
+          header("Location: manLogin.php?l=r");
+        }
        ?>
   <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,7 +121,7 @@ ORIGINALLY CREATED ON: 07/04/2017
         </li>
       </ul>
       <form class="form-inline" method="post">
-        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
         <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
       </form>
     </div>
@@ -134,28 +139,28 @@ ORIGINALLY CREATED ON: 07/04/2017
               <label class="col-lg-3 control-label">First name:</label>
               <div class="col-lg-8">
                   <span class="error"><?php echo $fNameErr; ?></span>
-                <input class="form-control" value="Jerry" type="text" name="fName">
+                <?php echo "<input class='form-control' value='".$empFName."' type='text' name='fName'>" ?>
               </div>
             </div>
             <div class="form-group">
               <label class="col-lg-3 control-label">Last name:</label>
               <div class="col-lg-8">
                 <span class="error"><?php echo $lNameErr; ?></span>
-                <input class="form-control" value="Smith" type="text" name="lName">
+                <?php echo "<input class='form-control' value='".$empLName."' type='text' name='lName'>" ?>
               </div>
             </div>
             <div class="form-group">
               <label class="col-lg-3 control-label">Email:</label>
               <div class="col-lg-8">
                 <span class="error"><?php echo $emailErr; ?></span>
-                <input class="form-control" value="jerry@carloshuizar.com" type="text" name="email">
+                <?php echo "<input class='form-control' value='".$empEmail."' type='text' name='email'>" ?>
               </div>
             </div>
             <div class="form-group">
               <label class="col-md-3 control-label">Password:</label>
               <div class="col-md-8">
                 <span class="error"><?php echo $passwordErr; ?></span>
-                <input class="form-control" value="test12345" type="password" name="password">
+                <?php echo "<input class='form-control' value='".$empPassword."' type='password' name='password'>" ?>
               </div>
             </div>
             <div class="row">

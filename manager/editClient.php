@@ -18,38 +18,58 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $nameErr = $addressErr = $emailErr = $telephoneErr = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
+          $fNameErr = $lNameErr = $addressErr = $emailErr = $telephoneErr = "";
+        
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
+          $email = $_SESSION['email'];
+          $clientEmail = $_SESSION['clientEmail'];
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+            // retrive the first name from database
+            $fName = $query->getFName($email);
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              // logout button clicked
+              if (isset($_POST['logout'])) {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: manLogin.php?l=q");
+              } 
+              // logout button clicked
+              else if (isset($_POST['delete'])) {
+                  // remove all from session from session
+                  $query->deletePerson($clientEmail);
+                  header("Location: manLogin.php?l=deleteClient");
+              }else {
                 // get all the inputs from lab1.php
-                $name = filter_input(INPUT_POST, 'name');
+                $empFName = filter_input(INPUT_POST, 'fName');
+                $empLName = filter_input(INPUT_POST, 'lName');
                 $address = filter_input(INPUT_POST, 'address');
-                $email = filter_input(INPUT_POST, 'email');
+                $empEmail = filter_input(INPUT_POST, 'email');
                 $telephone = filter_input(INPUT_POST, 'telephone');
 
                 // use boolean to stop page from loading the next page
                 $errorFound = false;
 
                 // error if the first name is empty
-                if (empty($_POST["name"])) {
-                    $nameErr = "Name is required";
+                if (empty($_POST["empFName"])) {
+                    $fNameErr = "First Name is required";
                     $errorFound = true;
                 } else {
-                    $nameErr = "";
+                    $fNameErr = "";
                 }
 
                 // error if the last name is empty
+                if (empty($_POST["empLName"])) {
+                    $lNameErr = "Last Name is required";
+                    $errorFound = true;
+                } else {
+                    $lNameErr = "";
+                }
+
+                // error if the address is empty
                 if (empty($_POST["address"])) {
                     $addressErr = "Address is required";
                     $errorFound = true;
@@ -73,21 +93,17 @@ ORIGINALLY CREATED ON: 07/04/2017
                 }
 
                 // do the following if no errors are found on the form
-                if ($errorFound == false){
-                    session_start();
+              if ($errorFound == false){
+                  $query->updateClient($clientEmail, $empEmail, $empFName, $empLName, $telephone, $address);
 
-                    // store input text in session so that it can be used on display.php
-                    $_SESSION['clientName'] = $name;
-                    $_SESSION['clientAddress'] = $address;
-                    $_SESSION['clientTelephone'] = $telephone;
-                    $_SESSION['clientEmail'] = $email;
-
-                    // go to display.php
-                    header("Location: editClientTest.php");
-                    exit();
-                }
+                  // go to dashboard.php and display successful message
+                  header("Location: manDashboard.php?l=updateClient");
+              }
             }
           }
+        } else {
+          header("Location: manLogin.php?l=r");
+        }
        ?>
   <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,7 +131,7 @@ ORIGINALLY CREATED ON: 07/04/2017
         </li>
       </ul>
       <form class="form-inline" method="post">
-        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
         <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
       </form>
     </div>
@@ -128,31 +144,39 @@ ORIGINALLY CREATED ON: 07/04/2017
       <div class="col-md-9 personal-info">
         <form class="form-horizontal" method="post">
           <div class="form-group">
-            <label class="col-lg-3 control-label">Full Name:</label>
+            <label class="col-lg-3 control-label">First Name:</label>
             <div class="col-lg-8">
-                <span class="error"><?php echo $nameErr; ?></span>
-              <input class="form-control" value="Jim Snow" type="text" name="name">
+                <span class="error"><?php echo $fNameErr; ?></span>
+              <input class="form-control" value="Jim Snow" type="text" name="fName">
+              <?php echo "<input class='form-control' value='".$clientFName."' type='text' name='fName'>" ?>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Last Name:</label>
+            <div class="col-lg-8">
+                <span class="error"><?php echo $lNameErr; ?></span>
+              <?php echo "<input class='form-control' value='".$clientLName."' type='text' name='lName'>" ?>
             </div>
           </div>
           <div class="form-group">
             <label class="col-lg-3 control-label">Address:</label>
             <div class="col-lg-8">
               <span class="error"><?php echo $addressErr; ?></span>
-              <input class="form-control" value="123456 Gallant " type="text" name="address">
+              <?php echo "<input class='form-control' value='".$clientAddress."' type='text' name='address'>" ?>
             </div>
           </div>
           <div class="form-group">
             <label class="col-lg-3 control-label">Email:</label>
             <div class="col-lg-8">
               <span class="error"><?php echo $emailErr; ?></span>
-              <input class="form-control" value="cahuizar@test.com" type="text" name="email">
+              <?php echo "<input class='form-control' value='".$clientEmail."' type='text' name='email'>" ?>
             </div>
           </div>
           <div class="form-group">
             <label class="col-md-3 control-label">Telephone:</label>
             <div class="col-md-8">
               <span class="error"><?php echo $telephoneErr; ?></span>
-              <input class="form-control" value="8474099912" type="tel" name="telephone">
+              <?php echo "<input class='form-control' value='".$clientTelephone."' type='text' name='telephone'>" ?>
             </div>
           </div>
           <div class="row">
@@ -160,7 +184,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                   <input class="btn btn-primary" value="Save Changes" type="submit">
                 </div>
                 <div class="col-12 col-md-4">
-                    <a class="btn btn-danger text-right">Delete Employee</a>
+                    <button class="btn btn-danger text-right" name="delete">Delete Employee</button>
                 </div>
           </div>
         </form>
