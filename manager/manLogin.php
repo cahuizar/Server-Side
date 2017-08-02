@@ -25,42 +25,47 @@ ORIGINALLY CREATED ON: 07/04/2017
           if ($_SERVER["REQUEST_METHOD"] == "POST") {
               $email = filter_input(INPUT_POST, 'email');
               $password = filter_input(INPUT_POST, 'password');
-              // get total attempts made by the email user
-              $attempts = $query->getCounter($email);
-              $validCredentials = $query->login($email, $password);
-              // on 4th unsuccessful try, session a time and inrement number of attempts
-              if($attempts == 4) {
-                  $_SESSION['timeout'] = time();
-                  $attempts =  $attempts + 1;
-                  // icrement number of attempts
-                  $query->setCounter($email, $attempts);
-               }
-               // increment number of attempts made by user
-              else {
-                  $temp_attempts =  $attempts + 1;
-                  $query->setCounter($email, $temp_attempts);
-              }
-              // succesful credentials, reset attempts and log user in
-              if($validCredentials && $attempts < 5) {
-                  $_SESSION['email'] = $email;
-                  $_SESSION['isLoggedIn'] = "yes";
-                  $attempts = 0;
-                  // reset counter
-                  $query->setCounter($email, $attempts);
-                  header("Location: empDashboard.php");
-              }
-              // attempts is larger than 5 then tell user he/she are locked out for 15 mins
-              else if ($attempts >= 5 ) {
-                  $err = "You have been locked out of your account. ";
-                  if ($_SESSION['timeout'] + 10 * 60 < time()) {
-                    $attempts = 0;
-                    // reset counter
-                    $query->setCounter($email, $attempts);
-                    session_destroy();
-                 }
+              if($password != '' && $email != '') {
+                  // get total attempts made by the email user
+                  $attempts = $query->getCounter($email);
+                  $validCredentials = $query->login($email, $password);
+                  // on 4th unsuccessful try, session a time and inrement number of attempts
+                  if($attempts == 4) {
+                      $_SESSION['timeout'] = time();
+                      $attempts =  $attempts + 1;
+                      // icrement number of attempts
+                      $query->setCounter($email, $attempts);
+                   }
+                   // increment number of attempts made by user
+                  else {
+                      $temp_attempts =  $attempts + 1;
+                      $query->setCounter($email, $temp_attempts);
+                  }
+                  // succesful credentials, reset attempts and log user in
+                  if($validCredentials && $attempts < 5) {
+                      $_SESSION['email'] = $email;
+                      $_SESSION['isLoggedIn'] = "yes";
+                      $attempts = 0;
+                      // reset counter
+                      $query->setCounter($email, $attempts);
+                      header("Location: manDashboard.php");
+                  }
+                  // attempts is larger than 5 then tell user he/she are locked out for 15 mins
+                  else if ($attempts >= 5 ) {
+                      $err = "You have been locked out of your account. ";
+                      if ($_SESSION['timeout'] + 10 * 60 < time()) {
+                        $attempts = 0;
+                        // reset counter
+                        $query->setCounter($email, $attempts);
+                        session_destroy();
+                     }
+                  } else {
+                      $err = "Username or password combination is incorrect.";
+                  }
               } else {
-                  $err = "Username or password combination is incorrect.";
+                   $err = "Username or password combination is incorrect.";
               }
+
           } else {
               if (isset($_GET['l']))
               {

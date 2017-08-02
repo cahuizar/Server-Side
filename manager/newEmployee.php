@@ -19,75 +19,76 @@ ORIGINALLY CREATED ON: 07/04/2017
   <body>
       <?php
           $fNameErr = $lNameErr = $emailErr = $passwordErr = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
-                // get all the inputs from lab1.php
-                $fName = filter_input(INPUT_POST, 'fName');
-                $lName = filter_input(INPUT_POST, 'lName');
-                $email = filter_input(INPUT_POST, 'email');
-                $password = filter_input(INPUT_POST, 'password');
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
+          $email = $_SESSION['email'];
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+            // retrive the first name from database
+            $fName = $query->getFName($email);
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              // logout button clicked
+              if (isset($_POST['logout'])) {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: manLogin.php?l=q");
+              } else {
+                  // get all the inputs from lab1.php
+                  $empfName = filter_input(INPUT_POST, 'fName');
+                  $lName = filter_input(INPUT_POST, 'lName');
+                  $email = filter_input(INPUT_POST, 'email');
+                  $password = filter_input(INPUT_POST, 'password');
 
-                // use boolean to stop page from loading the next page
-                $errorFound = false;
+                  // use boolean to stop page from loading the next page
+                  $errorFound = false;
 
-                // error if the first name is empty
-                if (empty($_POST["fName"])) {
-                    $fNameErr = "First Name is required";
-                    $errorFound = true;
-                } else {
-                    $fNameErr = "";
-                }
+                  // error if the first name is empty
+                  if (empty($_POST["fName"])) {
+                      $fNameErr = "First Name is required";
+                      $errorFound = true;
+                  } else {
+                      $fNameErr = "";
+                  }
 
-                // error if the last name is empty
-                if (empty($_POST["lName"])) {
-                    $lNameErr = "Last name is required";
-                    $errorFound = true;
-                } else {
-                    $lNameErr = "";
-                }
+                  // error if the last name is empty
+                  if (empty($_POST["lName"])) {
+                      $lNameErr = "Last name is required";
+                      $errorFound = true;
+                  } else {
+                      $lNameErr = "";
+                  }
 
-                // error if the email is empty
-                if (empty($_POST["email"])) {
-                    $emailErr = "Email is required";
-                    $errorFound = true;
-                } else {
-                    $emailErr = "";
-                }
+                  // error if the email is empty
+                  if (empty($_POST["email"])) {
+                      $emailErr = "Email is required";
+                      $errorFound = true;
+                  } else {
+                      $emailErr = "";
+                  }
 
-                // error if the password length is less than 8
-                if (strlen($password) < 8) {
-                    $passwordErr = "Password must be atleast 8 characters";
-                    $errorFound = true;
-                } else {
-                    $passwordErr = "";
-                }
+                  // error if the password length is less than 8
+                  if (strlen($password) < 8) {
+                      $passwordErr = "Password must be atleast 8 characters";
+                      $errorFound = true;
+                  } else {
+                      $passwordErr = "";
+                  }
 
-                // do the following if no errors are found on the form
-                if ($errorFound == false){
-                    session_start();
+                  // do the following if no errors are found on the form
+                  if ($errorFound == false){
+                      $query->newEmp($email, $password, $empfName, $lName, 0);
 
-                    // store input text in session so that it can be used on display.php
-                    $_SESSION['empFName'] = $fName;
-                    $_SESSION['empLName'] = $lName;
-                    $_SESSION['empEmail'] = $email;
-                    $_SESSION['empPassword'] = $password;
-
-                    // go to display.php
-                    header("Location: newEmployeeTest.php");
-                    exit();
-                }
+                      // go to dashboard.php and display successful message
+                      header("Location: manDashboard.php?l=newEmp");
+                  }
+              }
             }
+          // redirect back to login and display error message
+          } else {
+              header("Location: manLogin.php?l=r");
           }
        ?>
   <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
@@ -116,7 +117,7 @@ ORIGINALLY CREATED ON: 07/04/2017
         </li>
       </ul>
       <form class="form-inline" method="post">
-        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
         <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
       </form>
     </div>

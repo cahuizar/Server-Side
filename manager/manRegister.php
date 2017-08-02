@@ -74,7 +74,7 @@ ORIGINALLY CREATED ON: 07/04/2017
         // do the following if no errors are found on the form
         if ($errorFound == false){
             // display error if the email already exists
-            if($query->empExists($email)) {
+            if($query->manExists($email)) {
               $err = "User already exists";
             } else {
               $err = "";
@@ -123,7 +123,7 @@ ORIGINALLY CREATED ON: 07/04/2017
           <label for="confirmPassword" class="sr-only">Confirm Password</label>
           <span class="error"><?php echo $passwordConfirmErr; ?></span>
           <input style="margin-top:5px;" name="confirmPassword" id="confirmPassword" class="form-control" placeholder=" Confirm password*" type="password">
-          <span class="error"><?php echo $serverErr; ?></span>
+          <span class="error"><?php echo $err; ?></span>
           <button style="margin-top:15px;"class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
           <br />
           <div class="row">

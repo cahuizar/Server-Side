@@ -19,67 +19,68 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $dateErr = $startTimeErr = $endTimeErr = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      $dateErr = $startTimeErr = $endTimeErr = "";
+      require('Query.php');
+      session_start();
+      $query = new Query();
+      $loggedIn = $_SESSION['isLoggedIn'];
+      $email = $_SESSION['email'];
+      // allow access if the user is logged in
+      if($loggedIn == "yes") {
+        // retrive the first name from database
+        $fName = $query->getFName($email);
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          // logout button clicked
+          if (isset($_POST['logout'])) {
+              // remove all from session from session
+              session_destroy();
+              header("Location: manLogin.php?l=q");
+          } else {
+              // get all the inputs from lab1.php
+              $date = filter_input(INPUT_POST, 'date');
+              $startTime = filter_input(INPUT_POST, 'startTime');
+              $endTime = filter_input(INPUT_POST, 'endTime');
 
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
-                // get all the inputs from lab1.php
-                $date = filter_input(INPUT_POST, 'date');
-                $startTime = filter_input(INPUT_POST, 'startTime');
-                $endTime = filter_input(INPUT_POST, 'endTime');
+              // use boolean to stop page from loading the next page
+              $errorFound = false;
 
-                // use boolean to stop page from loading the next page
-                $errorFound = false;
+              // error if the first name is empty
+              if (empty($_POST["date"])) {
+                  $dateErr = "Date is required";
+                  $errorFound = true;
+              } else {
+                  $dateErr = "";
+              }
 
-                // error if the first name is empty
-                if (empty($_POST["date"])) {
-                    $dateErr = "Date is required";
-                    $errorFound = true;
-                } else {
-                    $dateErr = "";
-                }
+              // error if the last name is empty
+              if (empty($_POST["startTime"])) {
+                  $startTimeErr = "Start time is required";
+                  $errorFound = true;
+              } else {
+                  $startTimeErr = "";
+              }
 
-                // error if the last name is empty
-                if (empty($_POST["startTime"])) {
-                    $startTimeErr = "Start time is required";
-                    $errorFound = true;
-                } else {
-                    $startTimeErr = "";
-                }
+              // error if the last name is empty
+              if (empty($_POST["endTime"])) {
+                  $endTimeErr = "End time is required";
+                  $errorFound = true;
+              } else {
+                  $endTimeErr = "";
+              }
 
-                // error if the last name is empty
-                if (empty($_POST["endTime"])) {
-                    $endTimeErr = "End time is required";
-                    $errorFound = true;
-                } else {
-                    $endTimeErr = "";
-                }
+              // do the following if no errors are found on the form
+              if ($errorFound == false){
+                  $query->newTimesheet($email, $date, $startTime, $endTime);
 
-                // do the following if no errors are found on the form
-                if ($errorFound == false){
-                    session_start();
-
-                    // store input text in session so that it can be used on display.php
-                    $_SESSION['date'] = $date;
-                    $_SESSION['startTime'] = $startTime;
-                    $_SESSION['endTime'] = $endTime;
-
-                    // go to display.php
-                    header("Location: workTest.php");
-                    exit();
-                }
-            }
+                  // go to dashboard.php and display successful message
+                  header("Location: manDashboard.php?l=timesheet");
+              }
           }
+        }
+      // redirect back to login and display error message
+      } else {
+          header("Location: manLogin.php?l=r");
+      }
        ?>
       <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,7 +108,7 @@ ORIGINALLY CREATED ON: 07/04/2017
             </li>
           </ul>
           <form class="form-inline" method="post">
-            <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+            <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
             <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
           </form>
         </div>

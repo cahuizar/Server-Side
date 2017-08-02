@@ -104,6 +104,32 @@
 
         }
 
+        public function newEmp($email, $password, $fName, $lName, $counter)
+        {
+            // INSERT data into person table
+            $query = "INSERT INTO Person (email, fName, lName) VALUES (?, ?, ?)";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email, $fName, $lName));
+
+            // INSERT data into Employee table
+            $query = "INSERT INTO Employee (email, password, counter) VALUES (?, ?, ?)";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email, $password, $counter));
+        }
+
+        public function newClient($email, $address, $fName, $lName, $telephone)
+        {
+            // INSERT data into person table
+            $query = "INSERT INTO Person (email, fName, lName) VALUES (?, ?, ?)";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email, $fName, $lName));
+
+            // INSERT data into Employee table
+            $query = "INSERT INTO Client (email, address, telephone) VALUES (?, ?, ?)";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email, $address, $telephone));
+        }
+
         public function updateMan($curEmail, $email, $password, $fName, $lName, $counter)
         {
             // Update Person table

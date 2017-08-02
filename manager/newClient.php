@@ -18,76 +18,86 @@ ORIGINALLY CREATED ON: 07/04/2017
   </head>
   <body>
       <?php
-          $nameErr = $addressErr = $emailErr = $telephoneErr = "";
-          if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          $fNameErr = $lNameErr = $addressErr = $emailErr = $telephoneErr = "";
+          require('Query.php');
+          session_start();
+          $query = new Query();
+          $loggedIn = $_SESSION['isLoggedIn'];
+          $email = $_SESSION['email'];
+          // allow access if the user is logged in
+          if($loggedIn == "yes") {
+            // retrive the first name from database
+            $fName = $query->getFName($email);
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+              // logout button clicked
+              if (isset($_POST['logout'])) {
+                  // remove all from session from session
+                  session_destroy();
+                  header("Location: manLogin.php?l=q");
+              } else {
+                  // get all the inputs from lab1.php
+                  $clientfName = filter_input(INPUT_POST, 'fName');
+                  $lName = filter_input(INPUT_POST, 'lName');
+                  $address = filter_input(INPUT_POST, 'address');
+                  $email = filter_input(INPUT_POST, 'email');
+                  $telephone = filter_input(INPUT_POST, 'telephone');
 
-            // logout button clicked
-            if (isset($_POST['logout'])) {
-                session_start();
-                unset($_SESSION['fName']);
-            	unset($_SESSION['lName']);
-            	unset($_SESSION['email']);
-            	unset($_SESSION['confirmEmail']);
-            	unset($_SESSION['password']);
-            	unset($_SESSION['confirmPasssword']);
-                header("Location: ../index.php");
-            } else {
-                // get all the inputs from lab1.php
-                $name = filter_input(INPUT_POST, 'name');
-                $address = filter_input(INPUT_POST, 'address');
-                $email = filter_input(INPUT_POST, 'email');
-                $telephone = filter_input(INPUT_POST, 'telephone');
+                  // use boolean to stop page from loading the next page
+                  $errorFound = false;
 
-                // use boolean to stop page from loading the next page
-                $errorFound = false;
+                  // error if the first name is empty
+                  if (empty($_POST["fName"])) {
+                      $fNameErr = "first Name is required";
+                      $errorFound = true;
+                  } else {
+                      $nameErr = "";
+                  }
 
-                // error if the first name is empty
-                if (empty($_POST["name"])) {
-                    $nameErr = "Name is required";
-                    $errorFound = true;
-                } else {
-                    $nameErr = "";
-                }
+                  // error if the last name is empty
+                  if (empty($_POST["lName"])) {
+                      $lNameErr = "Last name is required";
+                      $errorFound = true;
+                  } else {
+                      $lNameErr = "";
+                  }
 
-                // error if the last name is empty
-                if (empty($_POST["address"])) {
-                    $addressErr = "Address is required";
-                    $errorFound = true;
-                } else {
-                    $addressErr = "";
-                }
+                  // error if the last name is empty
+                  if (empty($_POST["address"])) {
+                      $addressErr = "Address is required";
+                      $errorFound = true;
+                  } else {
+                      $addressErr = "";
+                  }
 
-                // error if the email is empty
-                if (empty($_POST["email"])) {
-                    $emailErr = "Email is required";
-                    $errorFound = true;
-                } else {
-                    $emailErr = "";
-                }
+                  // error if the email is empty
+                  if (empty($_POST["email"])) {
+                      $emailErr = "Email is required";
+                      $errorFound = true;
+                  } else {
+                      $emailErr = "";
+                  }
 
-                if(empty($_POST["telephone"])){
-                    $telephoneErr= 'Please enter a valid phone number';
-                    $errorFound = true;
-                } else {
-                    $telephoneErr = "";
-                }
+                  if(empty($_POST["telephone"])){
+                      $telephoneErr= 'Please enter a valid phone number';
+                      $errorFound = true;
+                  } else {
+                      $telephoneErr = "";
+                  }
 
-                // do the following if no errors are found on the form
-                if ($errorFound == false){
-                    session_start();
+                  // do the following if no errors are found on the form
+                  if ($errorFound == false){
+                      $query->newClient($email, $address, $fName, $lName, $telephone);
 
-                    // store input text in session so that it can be used on display.php
-                    $_SESSION['clientName'] = $name;
-                    $_SESSION['clientAddress'] = $address;
-                    $_SESSION['clientTelephone'] = $telephone;
-                    $_SESSION['clientEmail'] = $email;
-
-                    // go to display.php
-                    header("Location: newClientTest.php");
-                    exit();
-                }
+                      // go to dashboard.php and display successful message
+                      header("Location: manDashboard.php?l=newClient");
+                  }
+              }
             }
+          // redirect back to login and display error message
+          } else {
+              header("Location: manLogin.php?l=r");
           }
+
        ?>
   <nav class="navbar navbar-toggleable-md navbar-light" style="background-color: #1ad2f9;">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
@@ -115,7 +125,7 @@ ORIGINALLY CREATED ON: 07/04/2017
         </li>
       </ul>
       <form class="form-inline" method="post">
-        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> John</span></label>
+        <label style="padding-right:20px;">Hi,&nbsp;<span class="nav-name"> <?php echo $fName; ?></span></label>
         <button class="btn btn-primary my-2 my-sm-0 logout" name="logout">Logout</button>
       </form>
     </div>
@@ -128,10 +138,17 @@ ORIGINALLY CREATED ON: 07/04/2017
       <div class="col-md-9 personal-info">
         <form class="form-horizontal" method="post">
           <div class="form-group">
-            <label class="col-lg-3 control-label">Full Name:</label>
+            <label class="col-lg-3 control-label">First Name:</label>
             <div class="col-lg-8">
-                <span class="error"><?php echo $nameErr; ?></span>
-              <input class="form-control" type="text" name="name">
+                <span class="error"><?php echo $fNameErr ?></span>
+              <input class="form-control" type="text" name="fName">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-lg-3 control-label">Last Name:</label>
+            <div class="col-lg-8">
+                <span class="error"><?php echo $lNameErr; ?></span>
+              <input class="form-control" type="text" name="lName">
             </div>
           </div>
           <div class="form-group">
