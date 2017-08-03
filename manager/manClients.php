@@ -33,6 +33,9 @@ ORIGINALLY CREATED ON: 07/04/2017
         if($loggedIn == "yes") {
           // retrive the first name from database
           $fName = $query->getFName($email);
+          $clients = $query->getClients();
+          $rowCount = $query->getClientsCount();
+          $results = $rowCount[0];
           if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // logout button clicked
             if (isset($_POST['logout'])) {
@@ -40,7 +43,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                 session_destroy();
                 header("Location: manLogin.php?l=q");
             } else {
-                $clients = $query->getClients();
+
 
             }
           }
@@ -92,8 +95,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                 </div>
             </div>
       <?php
-          $results = $clients[0]; 
-          if($results[0] >= 1) {
+          if($results >= 1) {
               $counter = 0;
               foreach($clients as $client) {
                 echo '
@@ -104,7 +106,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                                 <div class="d-flex align-items-center schedule-flex">
                                     <div class="col-8 col-md-10">
                                         <a data-toggle="collapse" data-parent="#accordion" href="#collapse'. $counter .'" aria-expanded="true" aria-controls="collapse'. $counter .'">
-                                            '. $client->fName .' '. $client->lName .'
+                                            '. $client['fName'] .' '. $client['lName'] .'
                                         </a>
                                     </div>
                                 </div>
@@ -116,24 +118,24 @@ ORIGINALLY CREATED ON: 07/04/2017
                             <form action="editClient.php">
                                 <div class="row">
                                     <div class="col-12 col-md-6">
-                                        <label for="fname">Name</label>
-                                        <input name="fname" class="form-control" type="text" value="'. $client->fName .'" disabled>
+                                        <label for="fname">First Name</label>
+                                        <input name="fname" class="form-control" type="text" value="'. $client['fName'] .'" disabled>
                                     </div>
                                     <div class="col-12 col-md-6">
-                                        <label for="lname">Name</label>
-                                        <input name="lname" class="form-control" type="text" value="'. $client->lName .'" disabled>
+                                        <label for="lname">Last Name</label>
+                                        <input name="lname" class="form-control" type="text" value="'. $client['lName'] .'" disabled>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label for="address">Address</label>
-                                        <input name="address" class="form-control" type="text" value="'. $client->address .'" disabled>
+                                        <input name="address" class="form-control" type="text" value="'. $client['address'] .'" disabled>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label for="phone">Phone Number</label>
-                                        <input name="phone" class="form-control" type="text" value="'. $client->telephone .'" disabled>
+                                        <input name="phone" class="form-control" type="text" value="'. $client['telephone'] .'" disabled>
                                     </div>
                                     <div class="col-12 col-md-6">
                                         <label for="email">Email Address</label>
-                                        <input name="email" class="form-control" type="text" value="'. $client->email .'" disabled>
+                                        <input name="email" class="form-control" type="text" value="'. $client['email'] .'" disabled>
                                     </div>
                                 </div>
                                 <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Edit Client</button>
@@ -142,7 +144,8 @@ ORIGINALLY CREATED ON: 07/04/2017
                         </div>
                         </div>
                     </div>
-                '
+                ';
+                $counter++;
               }
           } else {
               echo '<p class="no-results text-center">There are no clients.</p>';

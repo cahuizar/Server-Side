@@ -28,16 +28,19 @@ ORIGINALLY CREATED ON: 07/04/2017
         if($loggedIn == "yes") {
           // retrive the first name from database
           $fName = $query->getFName($email);
+          $employees = $query->getEmployees();
+          $rowCount = $query->getEmployeesCount();
           if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // logout button clicked
             if (isset($_POST['logout'])) {
                 // remove all from session from session
                 session_destroy();
                 header("Location: manLogin.php?l=q");
-            } else {
-                $employees = $query->getEmployees();
-                $clients = $query->getEmpSchedule($email);
-
+            } else if(isset($_POST['edit'])) {
+                header("Location: editEmployee.php");
+            }
+            else if(isset($_POST['work'])) {
+                header("Location: newWorkDay.php");
             }
           }
         // redirect back to login and display error message
@@ -87,9 +90,9 @@ ORIGINALLY CREATED ON: 07/04/2017
             </div>
         </div>
         <?php
-          $results = $employees[0]; 
-          if($results[0] >= 1) {
-              echo '<div id="accordion" role="tablist" aria-multiselectable="true">'
+          $results = $rowCount[0];
+          if($results >= 1) {
+              echo '<div id="accordion" role="tablist" aria-multiselectable="true">';
               $counter = 0;
               foreach($employees as $employee) {
                 echo '
@@ -100,7 +103,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                             <div class="d-flex align-items-center schedule-flex">
                                 <div class="col-8 col-md-10">
                                   <a data-toggle="collapse" data-parent="#accordion" href="#collapse'. $counter .'" aria-expanded="true" aria-controls="collapseOne">
-                                      '. $employee->fName .' '. $employee->lName .'
+                                      '. $employee['fName'] .' '. $employee['lName'] .'
                                   </a>
                                 </div>
                             </div>
@@ -122,15 +125,15 @@ ORIGINALLY CREATED ON: 07/04/2017
                                     <div class="row">
                                           <div class="col-12 col-md-6 form-group">
                                               <label for="fName">First Name</label>
-                                              <input name="fName" class="form-control" type="text" value="'. $employee->fName .'" disabled>
+                                              <input name="fName" class="form-control" type="text" value="'. $employee['fName'] .'" disabled>
                                           </div>
                                           <div class="col-12 col-md-6">
                                               <label for="lName">Last Name</label>
-                                              <input name="lName" class="form-control" type="text" value="'. $employee->lName .'" disabled>
+                                              <input name="lName" class="form-control" type="text" value="'. $employee['lName'] .'" disabled>
                                           </div>
                                           <div class="col-12 col-md-6">
                                               <label for="email">Email Address</label>
-                                              <input name="email" class="form-control" type="text" value="'. $employee->email .'" disabled>
+                                              <input name="email" class="form-control" type="text" value="'. $employee['email'] .'" disabled>
                                           </div>
                                     </div>
                                     <div class="row">
@@ -146,7 +149,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                               </div>
                             </div>
                           </div>
-                          '
+                          ';
                       $counter++;
                       echo '
                           <div class="card">
@@ -157,10 +160,12 @@ ORIGINALLY CREATED ON: 07/04/2017
                             </div>
                             <div id="collapseInner'. $counter .'" class="collapse">
                               <div class="card-block">
-                            '
-                      $schedules = $query->getEmpSchedule($employee->email);
-                      $results = $schedules[0];
-                      if($results[0] >= 1) {
+                            ';
+                      $empEmail = $employee['email'];
+                      $count = $query->getEmpScheduleCount($empEmail);
+                      $schedules = $query->getEmpSchedule($empEmail);
+                      $results = $count->results;
+                      if($results > 1) {
                         echo '
                           <table class="table table-hover work-schedule">
                             <thead>
@@ -173,13 +178,13 @@ ORIGINALLY CREATED ON: 07/04/2017
                           <tbody>
                         ';
                         foreach($schedules as $schedule) {
-                          echo "
+                          echo '
                             <tr>
-                              <th scope='row'>". $schedule['date'] ."</th>
-                              <th>". $schedule['fName'] ." ". $schedule['lName'] ."</th>
-                              <td>". $schedule['startTime'] ."</td>
+                              <td scope="row">'. $schedule['date'] .'</td>
+                              <td>'. $schedule['fName'] .' '. $schedule['lName'] .'</td>
+                              <td>'. $schedule['startTime'] .'</td>
                             </tr>
-                          ";
+                          ';
                         }
                         echo '
                             </tbody>
@@ -206,7 +211,7 @@ ORIGINALLY CREATED ON: 07/04/2017
               echo '<p class="no-results text-center">There are no employees.</p>';
             }
         ?>
-          
+
           <!--<div class="card">
             <div class="card-header" role="tab" id="headingFour">
               <h5 class="mb-0">

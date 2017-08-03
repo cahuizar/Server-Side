@@ -19,7 +19,7 @@ ORIGINALLY CREATED ON: 07/04/2017
   <body>
       <?php
           $fNameErr = $lNameErr = $addressErr = $emailErr = $telephoneErr = "";
-        
+
           require('Query.php');
           session_start();
           $query = new Query();
@@ -36,7 +36,7 @@ ORIGINALLY CREATED ON: 07/04/2017
                   // remove all from session from session
                   session_destroy();
                   header("Location: manLogin.php?l=q");
-              } 
+              }
               // logout button clicked
               else if (isset($_POST['delete'])) {
                   // remove all from session from session
@@ -147,7 +147,6 @@ ORIGINALLY CREATED ON: 07/04/2017
             <label class="col-lg-3 control-label">First Name:</label>
             <div class="col-lg-8">
                 <span class="error"><?php echo $fNameErr; ?></span>
-              <input class="form-control" value="Jim Snow" type="text" name="fName">
               <?php echo "<input class='form-control' value='".$clientFName."' type='text' name='fName'>" ?>
             </div>
           </div>

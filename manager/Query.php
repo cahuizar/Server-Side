@@ -192,35 +192,58 @@
             return $row;
         }
 
+        public function getEmployeesCount() {
+            // retrieve the employees information
+            $query = "SELECT count(*) as results
+                      FROM Person
+                      JOIN Employee
+                      ON Person.email = Employee.email";
+            $statement = self::$db->prepare($query);
+            $statement->execute();
+            $row = $statement->fetchAll();
+            return $row;
+        }
+
         public function getEmployees() {
             // retrieve the employees information
-            $query = "SELECT count(*) as results, Employee.email, Person.fName, Person.lName,
+            $query = "SELECT Employee.email, Person.fName, Person.lName,
                       Employee.password
                       FROM Person
                       JOIN Employee
                       ON Person.email = Employee.email";
             $statement = self::$db->prepare($query);
-            $statement->execute(array($email));
-            $row = $statement->fetch(PDO::FETCH_OBJ);
+            $statement->execute();
+            $row = $statement->fetchAll();
             return $row;
         }
 
-        public function getClients() {
+        public function getClientsCount() {
             // retrieve the clients information
-            $query = "SELECT count(*) as results, Person.email, Person.fName, Person.lName,
-                      Client.password, Client.address, Client.telephone
+            $query = "SELECT count(*) as results
                       FROM Person
                       JOIN Client
                       ON Person.email = Client.email";
             $statement = self::$db->prepare($query);
             $statement->execute();
-            $row = $statement->fetch(PDO::FETCH_OBJ);
+            $row = $statement->fetchAll();
             return $row;
         }
 
-        public function getEmpSchedule($email) {
+        public function getClients() {
+            // retrieve the clients information
+            $query = "SELECT Person.email, Person.fName, Person.lName, Client.address, Client.telephone
+                      FROM Person
+                      JOIN Client
+                      ON Person.email = Client.email";
+            $statement = self::$db->prepare($query);
+            $statement->execute();
+            $row = $statement->fetchAll();
+            return $row;
+        }
+
+        public function getEmpScheduleCount($email) {
             // retrieve the the employees working schedule
-            $query = "SELECT count(*) as results, WorkDate.date, Person.fName, Person.lName, WorkDate.startTime,
+            $query = "SELECT count(*) as results
                       FROM Person
                       JOIN Client
                       ON Person.email = Client.email
@@ -230,6 +253,21 @@
             $statement = self::$db->prepare($query);
             $statement->execute(array($email));
             $row = $statement->fetch(PDO::FETCH_OBJ);
+            return $row;
+        }
+
+        public function getEmpSchedule($email) {
+            // retrieve the the employees working schedule
+            $query = "SELECT WorkDate.date, Person.fName, Person.lName, WorkDate.startTime
+                      FROM Person
+                      JOIN Client
+                      ON Person.email = Client.email
+                      JOIN WorkDate
+                      ON Client.email = WorkDate.clientEmail
+                      WHERE WorkDate.empEmail = ?";
+            $statement = self::$db->prepare($query);
+            $statement->execute(array($email));
+            $row = $statement->fetchAll();
             return $row;
         }
 
@@ -258,7 +296,7 @@
             $statement = self::$db->prepare($query);
             $statement->execute(array($counter, $email));
         }
-        
+
 
         public function getCounter($email) {
             // retrieve the number of tries the user has done to login
