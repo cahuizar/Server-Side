@@ -42,9 +42,10 @@ ORIGINALLY CREATED ON: 07/04/2017
                 // remove all from session from session
                 session_destroy();
                 header("Location: manLogin.php?l=q");
-            } else {
-
-
+            }
+            else if (isset($_POST['edit'])) {
+                $_SESSION['clientEmail'] = filter_input(INPUT_POST, 'editEmail');
+                header("Location: editClient.php");
             }
           }
         // redirect back to login and display error message
@@ -97,53 +98,53 @@ ORIGINALLY CREATED ON: 07/04/2017
       <?php
           if($results >= 1) {
               $counter = 0;
-              foreach($clients as $client) {
+                foreach($clients as $client) {
                 echo '
-                    <div class="card">
-                        <div class="card-header" role="tab" id="heading'. $counter .'">
-                            <h5 class="mb-0">
-                            <div class="row">
-                                <div class="d-flex align-items-center schedule-flex">
-                                    <div class="col-8 col-md-10">
-                                        <a data-toggle="collapse" data-parent="#accordion" href="#collapse'. $counter .'" aria-expanded="true" aria-controls="collapse'. $counter .'">
-                                            '. $client['fName'] .' '. $client['lName'] .'
-                                        </a>
-                                    </div>
-                                </div>
+                <div class="card">
+                <div class="card-header" role="tab" id="heading'. $counter .'">
+                    <h5 class="mb-0">
+                    <div class="row">
+                        <div class="d-flex align-items-center schedule-flex">
+                            <div class="col-8 col-md-10">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse'. $counter .'" aria-expanded="true" aria-controls="collapse'. $counter .'">
+                                    '. $client['fName'] .' '. $client['lName'] .'
+                                </a>
                             </div>
-                            </h5>
-                        </div>
-                        <div id="collapse'. $counter .'" class="collapse" role="tabpanel" aria-labelledby="heading'. $counter .'">
-                        <div class="card-block">
-                            <form action="editClient.php">
-                                <div class="row">
-                                    <div class="col-12 col-md-6">
-                                        <label for="fname">First Name</label>
-                                        <input name="fname" class="form-control" type="text" value="'. $client['fName'] .'" disabled>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label for="lname">Last Name</label>
-                                        <input name="lname" class="form-control" type="text" value="'. $client['lName'] .'" disabled>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label for="address">Address</label>
-                                        <input name="address" class="form-control" type="text" value="'. $client['address'] .'" disabled>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label for="phone">Phone Number</label>
-                                        <input name="phone" class="form-control" type="text" value="'. $client['telephone'] .'" disabled>
-                                    </div>
-                                    <div class="col-12 col-md-6">
-                                        <label for="email">Email Address</label>
-                                        <input name="email" class="form-control" type="text" value="'. $client['email'] .'" disabled>
-                                    </div>
-                                </div>
-                                <button class="btn btn-lg btn-primary btn-block schedule-submit" type="submit">Edit Client</button>
-                                <br />
-                            </form>
-                        </div>
                         </div>
                     </div>
+                    </h5>
+                </div>
+                <div id="collapse'. $counter .'" class="collapse" role="tabpanel" aria-labelledby="heading'. $counter .'">
+                <div class="card-block">
+                    <form method="post" id="form'. $counter .'">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label for="fname">First Name</label>
+                                <input name="fname" class="form-control" type="text" value="'. $client['fName'] .'" disabled>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="lname">Last Name</label>
+                                <input name="lname" class="form-control" type="text" value="'. $client['lName'] .'" disabled>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="address">Address</label>
+                                <input name="address" class="form-control" type="text" value="'. $client['address'] .'" disabled>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="phone">Phone Number</label>
+                                <input name="phone" class="form-control" type="text" value="'. $client['telephone'] .'" disabled>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label for="email">Email Address</label>
+                                <input name="email" class="form-control" type="text" value="'. $client['email'] .'" disabled>
+                            </div>
+                        </div>
+                        <a class="btn btn-lg btn-primary btn-block schedule-submit edit_client_button" id="'. $counter .'" name="edit" >Edit Client</a>
+                        <br />
+                    </form>
+                </div>
+                </div>
+                </div>
                 ';
                 $counter++;
               }
@@ -153,9 +154,38 @@ ORIGINALLY CREATED ON: 07/04/2017
       ?>
       </div>
     </div>
-      </div>
+    <div style=" visibility: hidden;">
+        <input class="editFName" name="editFName" type="text"  />
+        <input class="editLName" name="editLName" type="text"   />
+        <input class="editAddress" name="editAddress" type="text"   />
+        <input class="editTelephone" name="editTelephone" type="text"   />
+        <input class="editEmail" name="editEmail" type="text"   />
+    </div>
       <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+      <script>
+        $(document).ready(function () {
+            $(".edit_client_button").click(function() {
+                var buttonid = this.id;
+                //$( "#form"+buttonid ).submit();
+                var input = {};
+                formClicked = "form"+buttonid;
+                var counter = 0;
+                $("form#"+formClicked+" :input[type=text]").each(function(){
+                 input[counter] = $(this).val(); // This is the jquery object of the input, do what you will
+                 counter++;
+                });
+
+                $(".editFName").val(input[0]);
+                $(".editLName").val(input[1]);
+                $(".editAddress").val(input[2]);
+                $(".editTelephone").val(input[3]);
+                $(".editEmail").val(input[4]);
+                $( "#form"+buttonid ).submit();
+
+            });
+        });
+      </script>
   </body>
 </html>
